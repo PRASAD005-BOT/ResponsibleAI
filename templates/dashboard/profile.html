@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - AI Ethics Platform{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="profile-sidebar">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-circle fa-5x"></i>
+                        </div>
+                        <h2 class="profile-name">{{ user.get_full_name }}</h2>
+                        <p class="profile-username">@{{ user.username }}</p>
+                        {% if user.profile.job_title and user.profile.organization %}
+                            <p class="profile-position">{{ user.profile.job_title }} at {{ user.profile.organization }}</p>
+                        {% elif user.profile.job_title %}
+                            <p class="profile-position">{{ user.profile.job_title }}</p>
+                        {% elif user.profile.organization %}
+                            <p class="profile-organization">{{ user.profile.organization }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">{{ user.model_analyses.count }}</span>
+                            <span class="stat-label">AI Models Analyzed</span>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <a href="{% url 'dashboard:bias_detection' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-plus-circle"></i> Analyze New Model
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-8">
+                <div class="profile-content">
+                    <div class="content-header">
+                        <h3>My Profile</h3>
+                    </div>
+                    
+                    <div class="profile-tabs">
+                        <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="edit-tab" data-toggle="tab" href="#edit" role="tab">
+                                    Edit Profile
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="analyses-tab" data-toggle="tab" href="#analyses" role="tab">
+                                    My Analyses
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="activity-tab" data-toggle="tab" href="#activity" role="tab">
+                                    Recent Activity
+                                </a>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content" id="profileTabsContent">
+                            <!-- Edit Profile Tab -->
+                            <div class="tab-pane fade show active" id="edit" role="tabpanel">
+                                <form method="post" class="profile-form">
+                                    {% csrf_token %}
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                                            {{ form.first_name }}
+                                            {% if form.first_name.errors %}
+                                                <div class="error-message">
+                                                    {{ form.first_name.errors }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="form-group col-md-6">
+                                            <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                                            {{ form.last_name }}
+                                            {% if form.last_name.errors %}
+                                                <div class="error-message">
+                                                    {{ form.last_name.errors }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="{{ form.email.id_for_label }}">Email</label>
+                                        {{ form.email }}
+                                        {% if form.email.errors %}
+                                            <div class="error-message">
+                                                {{ form.email.errors }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="{{ form.organization.id_for_label }}">Organization</label>
+                                            {{ form.organization }}
+                                            {% if form.organization.errors %}
+                                                <div class="error-message">
+                                                    {{ form.organization.errors }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="form-group col-md-6">
+                                            <label for="{{ form.job_title.id_for_label }}">Job Title</label>
+                                            {{ form.job_title }}
+                                            {% if form.job_title.errors %}
+                                                <div class="error-message">
+                                                    {{ form.job_title.errors }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="{{ form.industry.id_for_label }}">Industry</label>
+                                        {{ form.industry }}
+                                        {% if form.industry.errors %}
+                                            <div class="error-message">
+                                                {{ form.industry.errors }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="{{ form.bio.id_for_label }}">About Me</label>
+                                        {{ form.bio }}
+                                        {% if form.bio.errors %}
+                                            <div class="error-message">
+                                                {{ form.bio.errors }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="{{ form.interests.id_for_label }}">AI Ethics Interests</label>
+                                        {{ form.interests }}
+                                        {% if form.interests.errors %}
+                                            <div class="error-message">
+                                                {{ form.interests.errors }}
+                                            </div>
+                                        {% endif %}
+                                        <small class="text-muted">Comma-separated list of interests (e.g., bias detection, transparency, governance)</small>
+                                    </div>
+                                    
+                                    {% if form.non_field_errors %}
+                                        <div class="error-message">
+                                            {{ form.non_field_errors }}
+                                        </div>
+                                    {% endif %}
+                                    
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </form>
+                            </div>
+                            
+                            <!-- My Analyses Tab -->
+                            <div class="tab-pane fade" id="analyses" role="tabpanel">
+                                {% if user.model_analyses.exists %}
+                                    <div class="analyses-list">
+                                        {% for analysis in user.model_analyses.all %}
+                                            <div class="analysis-item">
+                                                <div class="analysis-header">
+                                                    <h4>{{ analysis.name }}</h4>
+                                                    <span class="badge badge-primary">{{ analysis.get_model_type_display }}</span>
+                                                    <span class="analysis-date">{{ analysis.created_at|date:"M d, Y" }}</span>
+                                                </div>
+                                                <p class="analysis-description">{{ analysis.description|truncatewords:30 }}</p>
+                                                <div class="analysis-actions">
+                                                    {% if analysis.bias_analysis %}
+                                                        <a href="{% url 'dashboard:bias_detection' %}?analysis_id={{ analysis.id }}" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-chart-bar"></i> View Bias Analysis
+                                                        </a>
+                                                    {% endif %}
+                                                    
+                                                    {% if analysis.transparency_analysis %}
+                                                        <a href="{% url 'dashboard:transparency' %}?analysis_id={{ analysis.id }}" class="btn btn-sm btn-outline-info">
+                                                            <i class="fas fa-search"></i> View Transparency Analysis
+                                                        </a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="empty-state">
+                                        <i class="fas fa-robot fa-3x"></i>
+                                        <h4>No analyses yet</h4>
+                                        <p>Start by analyzing an AI model for bias or transparency</p>
+                                        <a href="{% url 'dashboard:bias_detection' %}" class="btn btn-primary">
+                                            Start an Analysis
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Activity Tab -->
+                            <div class="tab-pane fade" id="activity" role="tabpanel">
+                                {% if user.activities.exists %}
+                                    <div class="activity-timeline">
+                                        {% for activity in user.activities.all %}
+                                            <div class="timeline-item">
+                                                <div class="timeline-marker">
+                                                    <i class="fas fa-circle"></i>
+                                                </div>
+                                                <div class="timeline-content">
+                                                    <h5 class="timeline-title">{{ activity.activity_type }}</h5>
+                                                    <p>{{ activity.description }}</p>
+                                                    <span class="timeline-date">{{ activity.created_at|date:"M d, Y H:i" }}</span>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <div class="empty-state">
+                                        <i class="fas fa-history fa-3x"></i>
+                                        <h4>No activity yet</h4>
+                                        <p>Your recent platform activity will appear here</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Simple tab functionality (since we're not using Bootstrap JS)
+        const tabLinks = document.querySelectorAll('.nav-link');
+        const tabContents = document.querySelectorAll('.tab-pane');
+        
+        tabLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all tabs
+                tabLinks.forEach(tab => tab.classList.remove('active'));
+                tabContents.forEach(content => {
+                    content.classList.remove('show');
+                    content.classList.remove('active');
+                });
+                
+                // Add active class to current tab
+                this.classList.add('active');
+                
+                // Get the target tab content
+                const target = this.getAttribute('href').substring(1);
+                const targetContent = document.getElementById(target);
+                
+                // Show the target content
+                if (targetContent) {
+                    targetContent.classList.add('show');
+                    targetContent.classList.add('active');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

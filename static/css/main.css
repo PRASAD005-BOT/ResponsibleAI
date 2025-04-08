@@ -679,3 +679,371 @@ a:hover {
 
 .w-100 { width: 100%; }
 .h-100 { height: 100%; }
+
+/* Authentication UI */
+.auth-nav {
+    display: flex;
+    align-items: center;
+    margin-left: 1rem;
+}
+
+.auth-links {
+    display: flex;
+    align-items: center;
+}
+
+.auth-link {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    margin-right: 1rem;
+    transition: color 0.3s ease;
+}
+
+.auth-link:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+.auth-dropdown {
+    position: relative;
+}
+
+.auth-dropdown-toggle {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.auth-dropdown-toggle i {
+    margin-right: 0.5rem;
+}
+
+.auth-dropdown-toggle .fa-caret-down {
+    margin-left: 0.5rem;
+    margin-right: 0;
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+}
+
+.auth-dropdown-toggle:hover {
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.1);
+    text-decoration: none;
+}
+
+.auth-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.auth-dropdown:hover .auth-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.auth-dropdown:hover .fa-caret-down {
+    transform: rotate(180deg);
+}
+
+.dropdown-item {
+    color: var(--text-dark);
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-item i {
+    margin-right: 0.75rem;
+    color: var(--primary-color);
+    width: 20px;
+    text-align: center;
+}
+
+.dropdown-item:hover {
+    background-color: #f5f5f5;
+    text-decoration: none;
+}
+
+/* Authentication pages */
+.auth-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 250px);
+    padding: 3rem 0;
+    position: relative;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 500px;
+    background-color: var(--background-white);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    position: relative;
+    z-index: 10;
+}
+
+.auth-title {
+    font-size: 1.8rem;
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+    text-align: center;
+    color: var(--text-medium);
+    margin-bottom: 2rem;
+}
+
+.auth-form {
+    margin-bottom: 1.5rem;
+}
+
+.auth-links {
+    text-align: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.auth-links p {
+    margin-bottom: 0;
+}
+
+.particles-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 1;
+}
+
+#particles-js {
+    width: 100%;
+    height: 100%;
+}
+
+/* Profile Page */
+.profile-section {
+    padding: 3rem 0;
+}
+
+.profile-sidebar {
+    background-color: var(--background-white);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.profile-avatar {
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.profile-username {
+    color: var(--text-medium);
+    margin-bottom: 0.5rem;
+}
+
+.profile-position, .profile-organization {
+    font-size: 0.9rem;
+    color: var(--text-medium);
+    margin-bottom: 0;
+}
+
+.profile-stats {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.stat-item {
+    text-align: center;
+    margin: 0 1rem;
+}
+
+.stat-number {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-medium);
+}
+
+.profile-actions {
+    text-align: center;
+}
+
+.profile-content {
+    background-color: var(--background-white);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+}
+
+.content-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.content-header h3 {
+    margin: 0;
+}
+
+.profile-tabs {
+    padding: 0 1.5rem 1.5rem;
+}
+
+.profile-form {
+    margin-top: 1.5rem;
+}
+
+.analyses-list {
+    margin-top: 1.5rem;
+}
+
+.analysis-item {
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    background-color: #f9f9f9;
+    border-left: 4px solid var(--primary-color);
+}
+
+.analysis-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.analysis-header h4 {
+    margin: 0;
+    margin-right: 1rem;
+}
+
+.analysis-date {
+    color: var(--text-medium);
+    font-size: 0.9rem;
+    margin-left: auto;
+}
+
+.analysis-description {
+    margin-bottom: 0.5rem;
+    color: var(--text-medium);
+}
+
+.analysis-actions {
+    margin-top: 0.5rem;
+}
+
+.activity-timeline {
+    margin-top: 1.5rem;
+}
+
+.timeline-item {
+    display: flex;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.timeline-marker {
+    flex: 0 0 40px;
+    position: relative;
+}
+
+.timeline-marker i {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    position: absolute;
+    top: 0.25rem;
+    left: 0;
+}
+
+.timeline-marker::after {
+    content: '';
+    position: absolute;
+    top: 1.5rem;
+    bottom: -1.5rem;
+    left: 0.45rem;
+    width: 1px;
+    background-color: var(--border-color);
+}
+
+.timeline-item:last-child .timeline-marker::after {
+    display: none;
+}
+
+.timeline-content {
+    flex: 1;
+}
+
+.timeline-title {
+    margin-top: 0;
+    margin-bottom: 0.25rem;
+}
+
+.timeline-date {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-medium);
+    margin-top: 0.5rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 0;
+    color: var(--text-medium);
+}
+
+.empty-state i {
+    color: var(--primary-light);
+    margin-bottom: 1rem;
+}
+
+.empty-state h4 {
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    margin-bottom: 1.5rem;
+}

@@ -1,14 +1,16 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate, logout
 import json
 import pandas as pd
 import numpy as np
 import io
 
-from .models import ModelAnalysis, CaseStudy, EducationalResource
-from .forms import ModelUploadForm, TransparencyAnalyzerForm
+from .models import ModelAnalysis, CaseStudy, EducationalResource, UserProfile, UserActivity
+from .forms import ModelUploadForm, TransparencyAnalyzerForm, CustomSignUpForm, CustomLoginForm, UserProfileForm
 from .bias_detection import detect_bias_in_data, calculate_fairness_metrics, perform_ai_ethics_analysis
 from .transparency import analyze_model_explainability, generate_feature_importance
 from .governance import get_governance_template
@@ -330,6 +332,127 @@ def governance(request):
         'framework_types': framework_types
     }
     return render(request, 'dashboard/governance.html', context)
+
+
+def user_signup(request):
+    """User registration view"""
+    if request.method == 'POST':
+        form = CustomSignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            
+            # Log the activity
+            UserActivity.objects.create(
+                user=user,
+                activity_type='account_created',
+                description='User account created'
+            )
+            
+            # Authenticate and log in the user
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            
+            messages.success(request, "Your account has been created successfully!")
+            return redirect('dashboard:index')
+    else:
+        form = CustomSignUpForm()
+    
+    context = {
+        'title': 'Sign Up - AI Ethics Platform',
+        'form': form
+    }
+    return render(request, 'dashboard/signup.html', context)
+
+
+def user_login(request):
+    """User login view"""
+    if request.method == 'POST':
+        form = CustomLoginForm(data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            
+            if user is not None:
+                login(request, user)
+                
+                # Log the activity
+                UserActivity.objects.create(
+                    user=user,
+                    activity_type='login',
+                    description='User logged in'
+                )
+                
+                # Redirect to the page they were trying to access, or homepage
+                next_page = request.GET.get('next', 'dashboard:index')
+                messages.success(request, "You have been logged in successfully!")
+                return redirect(next_page)
+            else:
+                messages.error(request, "Invalid username or password.")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = CustomLoginForm()
+    
+    context = {
+        'title': 'Login - AI Ethics Platform',
+        'form': form
+    }
+    return render(request, 'dashboard/login.html', context)
+
+
+def user_logout(request):
+    """User logout view"""
+    if request.user.is_authenticated:
+        # Log the activity
+        UserActivity.objects.create(
+            user=request.user,
+            activity_type='logout',
+            description='User logged out'
+        )
+    
+    logout(request)
+    messages.success(request, "You have been logged out successfully!")
+    return redirect('dashboard:index')
+
+
+@login_required
+def user_profile(request):
+    """User profile view"""
+    user = request.user
+    
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=user.profile, user=user)
+        if form.is_valid():
+            form.save()
+            
+            # Log the activity
+            UserActivity.objects.create(
+                user=user,
+                activity_type='profile_updated',
+                description='User profile updated'
+            )
+            
+            messages.success(request, "Your profile has been updated successfully!")
+            return redirect('dashboard:profile')
+    else:
+        form = UserProfileForm(instance=user.profile, user=user)
+    
+    # Get user's model analyses
+    user_analyses = ModelAnalysis.objects.filter(user=user).order_by('-created_at')
+    
+    # Get user's recent activities
+    user_activities = UserActivity.objects.filter(user=user).order_by('-created_at')[:10]
+    
+    context = {
+        'title': 'My Profile - AI Ethics Platform',
+        'form': form,
+        'user_analyses': user_analyses,
+        'user_activities': user_activities
+    }
+    return render(request, 'dashboard/profile.html', context)
 
 
 def case_studies(request):
