@@ -1,0 +1,372 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Governance Frameworks - AI Ethics Platform{% endblock %}
+
+{% block extra_head %}
+<style>
+    .framework-card {
+        margin-bottom: 2rem;
+        transition: transform 0.2s ease;
+    }
+    
+    .framework-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .framework-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+    }
+    
+    .component-card {
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--primary-color);
+    }
+    
+    .implementation-step {
+        background-color: var(--background-light);
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+    }
+    
+    .implementation-step h5 {
+        margin-top: 0;
+    }
+    
+    .framework-details {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.5s ease;
+    }
+    
+    .framework-details.open {
+        max-height: 2000px;
+    }
+    
+    .phase-card {
+        background-color: rgba(63, 81, 181, 0.1);
+        border: 1px solid rgba(63, 81, 181, 0.2);
+        border-radius: 4px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .download-section {
+        background-color: var(--background-light);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-top: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header section -->
+<section class="dashboard-header">
+    <div class="container">
+        <h1>AI Governance Frameworks</h1>
+        <p>Implement responsible AI governance in your organization</p>
+    </div>
+</section>
+
+<!-- Main content -->
+<div class="container mt-4">
+    <!-- Introduction -->
+    <section class="mb-5">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-gavel"></i> AI Governance
+            </div>
+            <div class="card-body">
+                <h3>Why AI Governance Matters</h3>
+                <p>Effective governance is essential for ensuring that AI systems are developed and deployed responsibly. Our frameworks help organizations establish the structures, processes, and policies needed for ethical AI implementation.</p>
+                
+                <div class="row mt-4">
+                    <div class="col">
+                        <h4><i class="fas fa-check-circle"></i> Benefits</h4>
+                        <ul>
+                            <li>Mitigate ethical and legal risks</li>
+                            <li>Build trust with customers and stakeholders</li>
+                            <li>Ensure regulatory compliance</li>
+                            <li>Promote responsible innovation</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col">
+                        <h4><i class="fas fa-users-cog"></i> Key Components</h4>
+                        <ul>
+                            <li>Leadership and oversight structures</li>
+                            <li>Risk assessment processes</li>
+                            <li>Documentation and transparency requirements</li>
+                            <li>Training and awareness programs</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Framework Types -->
+    <section class="mb-5">
+        <h2>Available Frameworks</h2>
+        <p>Select a framework type to explore guidelines and implementation steps:</p>
+        
+        <div class="row mt-3">
+            <!-- General Framework -->
+            <div class="col">
+                <div class="card framework-card" id="general-framework-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-cubes framework-icon"></i>
+                        <h3>General AI Governance</h3>
+                        <p>A comprehensive framework for governing AI systems across all business applications</p>
+                        <button class="btn btn-primary view-framework-btn" data-framework="general">
+                            View Framework
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="framework-details" id="general-framework-details">
+                    <div class="card">
+                        <div class="card-header">General AI Governance Framework</div>
+                        <div class="card-body">
+                            <div id="general-framework-content">
+                                <div class="text-center">
+                                    <div class="spinner"></div>
+                                    <p>Loading framework details...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Industry-Specific Framework -->
+            <div class="col">
+                <div class="card framework-card" id="industry-framework-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-industry framework-icon"></i>
+                        <h3>Industry-Specific Governance</h3>
+                        <p>Tailored frameworks for specific industries like healthcare, finance, and retail</p>
+                        <button class="btn btn-primary view-framework-btn" data-framework="industry">
+                            View Framework
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="framework-details" id="industry-framework-details">
+                    <div class="card">
+                        <div class="card-header">Industry-Specific AI Governance</div>
+                        <div class="card-body">
+                            <div id="industry-framework-content">
+                                <div class="text-center">
+                                    <div class="spinner"></div>
+                                    <p>Loading framework details...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-3">
+            <!-- Fairness Framework -->
+            <div class="col">
+                <div class="card framework-card" id="fairness-framework-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-balance-scale framework-icon"></i>
+                        <h3>Fairness & Bias Governance</h3>
+                        <p>Frameworks focused specifically on ensuring fairness and mitigating bias in AI systems</p>
+                        <button class="btn btn-primary view-framework-btn" data-framework="fairness">
+                            View Framework
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="framework-details" id="fairness-framework-details">
+                    <div class="card">
+                        <div class="card-header">Fairness & Bias Governance Framework</div>
+                        <div class="card-body">
+                            <div id="fairness-framework-content">
+                                <div class="text-center">
+                                    <div class="spinner"></div>
+                                    <p>Loading framework details...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Privacy Framework -->
+            <div class="col">
+                <div class="card framework-card" id="privacy-framework-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-user-shield framework-icon"></i>
+                        <h3>Privacy Governance</h3>
+                        <p>Frameworks for ensuring privacy protection in AI systems and data handling</p>
+                        <button class="btn btn-primary view-framework-btn" data-framework="privacy">
+                            View Framework
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="framework-details" id="privacy-framework-details">
+                    <div class="card">
+                        <div class="card-header">Privacy Governance Framework</div>
+                        <div class="card-body">
+                            <div id="privacy-framework-content">
+                                <div class="text-center">
+                                    <div class="spinner"></div>
+                                    <p>Loading framework details...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Implementation Guide -->
+    <section class="mb-5">
+        <h2>Implementation Guide</h2>
+        
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-clipboard-list"></i> Getting Started
+            </div>
+            <div class="card-body">
+                <h3>How to Implement AI Governance</h3>
+                <p>Follow these steps to implement AI governance in your organization:</p>
+                
+                <div class="implementation-step">
+                    <h5>1. Assessment & Planning</h5>
+                    <ul>
+                        <li>Evaluate your organization's AI maturity</li>
+                        <li>Identify key stakeholders</li>
+                        <li>Map AI use cases and their risks</li>
+                        <li>Select appropriate governance framework(s)</li>
+                    </ul>
+                </div>
+                
+                <div class="implementation-step">
+                    <h5>2. Structure & Leadership</h5>
+                    <ul>
+                        <li>Establish an AI ethics committee or board</li>
+                        <li>Define roles and responsibilities</li>
+                        <li>Secure executive sponsorship</li>
+                        <li>Create accountability mechanisms</li>
+                    </ul>
+                </div>
+                
+                <div class="implementation-step">
+                    <h5>3. Policy Development</h5>
+                    <ul>
+                        <li>Create AI ethics principles</li>
+                        <li>Develop governance policies</li>
+                        <li>Establish risk assessment processes</li>
+                        <li>Define documentation requirements</li>
+                    </ul>
+                </div>
+                
+                <div class="implementation-step">
+                    <h5>4. Implementation & Integration</h5>
+                    <ul>
+                        <li>Integrate governance into development lifecycle</li>
+                        <li>Train teams on governance processes</li>
+                        <li>Implement monitoring and reporting</li>
+                        <li>Create feedback mechanisms</li>
+                    </ul>
+                </div>
+                
+                <div class="implementation-step">
+                    <h5>5. Continuous Improvement</h5>
+                    <ul>
+                        <li>Regularly review and update governance frameworks</li>
+                        <li>Conduct periodic assessments</li>
+                        <li>Stay current with regulatory developments</li>
+                        <li>Share learnings across the organization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Templates & Downloads -->
+    <section class="mb-5">
+        <div class="download-section">
+            <div class="row">
+                <div class="col">
+                    <h3><i class="fas fa-download"></i> Governance Templates</h3>
+                    <p>Download templates to help implement AI governance in your organization:</p>
+                </div>
+                <div class="col text-right">
+                    <button class="btn btn-primary" id="download-all-btn">Download All Templates</button>
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>AI Impact Assessment Template</h4>
+                            <p>A structured template for assessing the ethical implications of AI projects</p>
+                            <button class="btn btn-outline template-btn" data-template="impact-assessment">
+                                <i class="fas fa-file-alt"></i> Preview
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>AI Ethics Review Checklist</h4>
+                            <p>A comprehensive checklist for reviewing AI systems against ethical standards</p>
+                            <button class="btn btn-outline template-btn" data-template="ethics-review">
+                                <i class="fas fa-file-alt"></i> Preview
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4>Model Documentation Template</h4>
+                            <p>Template for documenting AI models according to governance standards</p>
+                            <button class="btn btn-outline template-btn" data-template="model-documentation">
+                                <i class="fas fa-file-alt"></i> Preview
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Template Preview Modal -->
+<div class="modal" id="template-preview-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000;">
+    <div class="modal-dialog" style="width: 80%; max-width: 800px; margin: 50px auto; background-color: white; border-radius: 8px; overflow: hidden;">
+        <div class="modal-header" style="padding: 1rem 1.5rem; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center;">
+            <h3 id="modal-title" style="margin: 0;">Template Preview</h3>
+            <button id="close-modal-btn" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 1.5rem; max-height: 70vh; overflow-y: auto;">
+            <div id="template-content"></div>
+        </div>
+        <div class="modal-footer" style="padding: 1rem 1.5rem; border-top: 1px solid #e0e0e0; text-align: right;">
+            <button class="btn btn-outline" id="close-preview-btn">Close</button>
+            <button class="btn btn-primary" id="download-template-btn">Download Template</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/governance.js"></script>
+{% endblock %}

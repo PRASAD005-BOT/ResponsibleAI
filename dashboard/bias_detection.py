@@ -1,0 +1,327 @@
+"""
+Bias detection and fairness metrics calculation for AI models
+"""
+
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import confusion_matrix
+import scipy.stats as stats
+
+def detect_bias_in_data(df, sensitive_attributes, target_column=None):
+    """
+    Detects potential bias in data based on sensitive attributes
+    
+    Parameters:
+    -----------
+    df : pandas.DataFrame
+        The dataset to analyze
+    sensitive_attributes : list
+        List of column names that contain sensitive attributes
+    target_column : str, optional
+        Target/outcome column if available
+        
+    Returns:
+    --------
+    dict
+        Dictionary containing bias detection results
+    """
+    results = {
+        'dataset_size': len(df),
+        'attribute_distribution': {},
+        'correlation_with_sensitive': {},
+        'statistical_parity': {},
+        'overall_assessment': {}
+    }
+    
+    # Check distribution of sensitive attributes
+    for attr in sensitive_attributes:
+        if attr not in df.columns:
+            results['attribute_distribution'][attr] = {
+                'error': f"Column {attr} not found in dataset"
+            }
+            continue
+        
+        # Calculate distribution
+        distribution = df[attr].value_counts(normalize=True).to_dict()
+        results['attribute_distribution'][attr] = {
+            'distribution': distribution,
+            'entropy': stats.entropy(list(distribution.values())),
+            'unique_values': len(distribution)
+        }
+        
+        # Add assessment
+        if max(distribution.values()) > 0.8:
+            results['attribute_distribution'][attr]['assessment'] = "Highly imbalanced"
+        elif max(distribution.values()) > 0.6:
+            results['attribute_distribution'][attr]['assessment'] = "Moderately imbalanced"
+        else:
+            results['attribute_distribution'][attr]['assessment'] = "Relatively balanced"
+    
+    # If target column provided, check for correlation with sensitive attributes
+    if target_column and target_column in df.columns:
+        for attr in sensitive_attributes:
+            if attr not in df.columns:
+                continue
+                
+            # For categorical target, check chi-square
+            if df[target_column].dtype == 'object' or df[target_column].dtype == 'category':
+                try:
+                    contingency = pd.crosstab(df[attr], df[target_column])
+                    chi2, p, _, _ = stats.chi2_contingency(contingency)
+                    correlation = {
+                        'method': 'chi_square',
+                        'chi2': chi2,
+                        'p_value': p,
+                        'significant': p < 0.05
+                    }
+                except:
+                    correlation = {
+                        'method': 'chi_square',
+                        'error': 'Could not calculate chi-square'
+                    }
+            # For numerical target, check correlation
+            else:
+                try:
+                    # Convert categorical attributes to numerical
+                    if df[attr].dtype == 'object' or df[attr].dtype == 'category':
+                        le = LabelEncoder()
+                        attr_encoded = le.fit_transform(df[attr])
+                        corr, p = stats.pearsonr(attr_encoded, df[target_column])
+                    else:
+                        corr, p = stats.pearsonr(df[attr], df[target_column])
+                    
+                    correlation = {
+                        'method': 'pearson',
+                        'correlation': corr,
+                        'p_value': p,
+                        'significant': p < 0.05
+                    }
+                except:
+                    correlation = {
+                        'method': 'pearson',
+                        'error': 'Could not calculate correlation'
+                    }
+            
+            results['correlation_with_sensitive'][attr] = correlation
+            
+            # Calculate statistical parity if binary target
+            if len(df[target_column].unique()) == 2:
+                try:
+                    parity_results = check_statistical_parity(df, attr, target_column)
+                    results['statistical_parity'][attr] = parity_results
+                except Exception as e:
+                    results['statistical_parity'][attr] = {
+                        'error': str(e)
+                    }
+    
+    # Overall assessment
+    for attr in sensitive_attributes:
+        if attr not in df.columns:
+            continue
+            
+        # Check for potential bias
+        bias_indicators = []
+        
+        # Imbalanced distribution
+        if attr in results['attribute_distribution'] and 'assessment' in results['attribute_distribution'][attr]:
+            if results['attribute_distribution'][attr]['assessment'] in ["Highly imbalanced", "Moderately imbalanced"]:
+                bias_indicators.append("Imbalanced distribution")
+        
+        # Correlation with target
+        if attr in results['correlation_with_sensitive']:
+            if 'significant' in results['correlation_with_sensitive'][attr] and results['correlation_with_sensitive'][attr]['significant']:
+                bias_indicators.append("Significant correlation with target")
+        
+        # Statistical parity difference
+        if attr in results['statistical_parity'] and 'parity_difference' in results['statistical_parity'][attr]:
+            if abs(results['statistical_parity'][attr]['parity_difference']) > 0.1:
+                bias_indicators.append("Statistical parity difference exceeds 0.1")
+        
+        # Set overall assessment
+        if len(bias_indicators) >= 2:
+            risk_level = "High risk of bias"
+        elif len(bias_indicators) == 1:
+            risk_level = "Medium risk of bias"
+        else:
+            risk_level = "Low risk of bias"
+            
+        results['overall_assessment'][attr] = {
+            'risk_level': risk_level,
+            'bias_indicators': bias_indicators
+        }
+    
+    return results
+
+
+def check_statistical_parity(df, sensitive_attr, target_column):
+    """
+    Checks statistical parity (difference in positive outcomes between groups)
+    
+    Parameters:
+    -----------
+    df : pandas.DataFrame
+        The dataset to analyze
+    sensitive_attr : str
+        Column name of the sensitive attribute
+    target_column : str
+        Target/outcome column
+        
+    Returns:
+    --------
+    dict
+        Dictionary containing statistical parity results
+    """
+    results = {}
+    
+    # Get unique values in sensitive attribute
+    unique_attrs = df[sensitive_attr].unique()
+    
+    # Check parity for each value
+    positive_rates = {}
+    for attr_value in unique_attrs:
+        subset = df[df[sensitive_attr] == attr_value]
+        positive_rate = subset[target_column].mean()
+        positive_rates[attr_value] = positive_rate
+    
+    # Calculate parity difference (max difference between groups)
+    max_rate = max(positive_rates.values())
+    min_rate = min(positive_rates.values())
+    parity_difference = max_rate - min_rate
+    
+    results['positive_rates'] = positive_rates
+    results['parity_difference'] = parity_difference
+    
+    # Assess parity
+    if parity_difference <= 0.05:
+        results['assessment'] = "Good statistical parity"
+    elif parity_difference <= 0.1:
+        results['assessment'] = "Moderate statistical parity"
+    else:
+        results['assessment'] = "Poor statistical parity"
+    
+    return results
+
+
+def calculate_fairness_metrics(df, sensitive_attributes, target_column=None, prediction_column=None):
+    """
+    Calculates fairness metrics for model predictions
+    
+    Parameters:
+    -----------
+    df : pandas.DataFrame
+        The dataset containing target and predictions
+    sensitive_attributes : list
+        List of column names that contain sensitive attributes
+    target_column : str, optional
+        Actual outcome column
+    prediction_column : str, optional
+        Predicted outcome column
+        
+    Returns:
+    --------
+    dict
+        Dictionary containing fairness metrics
+    """
+    results = {
+        'metrics_by_attribute': {}
+    }
+    
+    # If no prediction column, we can only do limited analysis
+    if target_column is None or prediction_column is None:
+        # Only do limited analysis
+        for attr in sensitive_attributes:
+            if attr not in df.columns:
+                continue
+                
+            results['metrics_by_attribute'][attr] = {
+                'note': 'Limited analysis - prediction or target column not provided'
+            }
+            
+            # Check distribution
+            distribution = df[attr].value_counts(normalize=True).to_dict()
+            results['metrics_by_attribute'][attr]['distribution'] = distribution
+        
+        return results
+    
+    # Full analysis with target and prediction columns
+    for attr in sensitive_attributes:
+        if attr not in df.columns:
+            continue
+            
+        attr_results = {}
+        
+        # Get unique values in sensitive attribute
+        unique_attrs = df[attr].unique()
+        
+        # Calculate metrics for each group
+        group_metrics = {}
+        for attr_value in unique_attrs:
+            subset = df[df[attr] == attr_value]
+            
+            # Skip if too few samples
+            if len(subset) < 10:
+                group_metrics[attr_value] = {
+                    'error': 'Too few samples'
+                }
+                continue
+            
+            # Calculate confusion matrix
+            y_true = subset[target_column]
+            y_pred = subset[prediction_column]
+            
+            try:
+                tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+                
+                # Calculate metrics
+                group_metrics[attr_value] = {
+                    'sample_size': len(subset),
+                    'true_positive_rate': tp / (tp + fn) if (tp + fn) > 0 else 0,
+                    'false_positive_rate': fp / (fp + tn) if (fp + tn) > 0 else 0,
+                    'true_negative_rate': tn / (tn + fp) if (tn + fp) > 0 else 0,
+                    'false_negative_rate': fn / (fn + tp) if (fn + tp) > 0 else 0,
+                    'positive_predictive_value': tp / (tp + fp) if (tp + fp) > 0 else 0,
+                    'accuracy': (tp + tn) / (tp + tn + fp + fn)
+                }
+            except:
+                group_metrics[attr_value] = {
+                    'error': 'Could not calculate metrics'
+                }
+        
+        attr_results['group_metrics'] = group_metrics
+        
+        # Calculate disparities
+        if len(group_metrics) >= 2:
+            # Calculate disparities for each metric
+            disparities = {
+                'true_positive_rate': [],
+                'false_positive_rate': [],
+                'accuracy': []
+            }
+            
+            valid_groups = [g for g in group_metrics if 'error' not in group_metrics[g]]
+            
+            if len(valid_groups) >= 2:
+                for metric in disparities:
+                    values = [group_metrics[g][metric] for g in valid_groups]
+                    max_disparity = max(values) - min(values)
+                    disparities[metric] = max_disparity
+                
+                attr_results['disparities'] = disparities
+                
+                # Overall fairness assessment
+                tpr_disparity = disparities['true_positive_rate']
+                fpr_disparity = disparities['false_positive_rate']
+                
+                if tpr_disparity <= 0.1 and fpr_disparity <= 0.1:
+                    fairness_assessment = "Good fairness"
+                elif tpr_disparity <= 0.2 and fpr_disparity <= 0.2:
+                    fairness_assessment = "Moderate fairness"
+                else:
+                    fairness_assessment = "Poor fairness"
+                
+                attr_results['fairness_assessment'] = fairness_assessment
+        
+        results['metrics_by_attribute'][attr] = attr_results
+    
+    return results

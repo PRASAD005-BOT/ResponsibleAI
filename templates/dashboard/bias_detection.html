@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Bias Detection - AI Ethics Platform{% endblock %}
+
+{% block extra_head %}
+<style>
+    .file-input-container {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+    }
+    
+    .file-input-container input[type=file] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+    
+    .file-input-label {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background-color: var(--background-light);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+    
+    .attribute-suggestions {
+        margin-top: 0.5rem;
+    }
+    
+    .attribute-suggestion {
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+    }
+    
+    .bias-analysis {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background-color: var(--background-white);
+    }
+    
+    .chart-wrapper {
+        margin-bottom: 1.5rem;
+        min-height: 350px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header section -->
+<section class="dashboard-header">
+    <div class="container">
+        <h1>AI Bias Detection</h1>
+        <p>Identify and mitigate bias in your AI models and datasets</p>
+    </div>
+</section>
+
+<!-- Main content -->
+<div class="container mt-4">
+    <div class="row">
+        <div class="col">
+            <!-- Bias detection form -->
+            <section class="mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-balance-scale"></i> Analyze Bias in Your Data
+                    </div>
+                    <div class="card-body">
+                        <form id="bias-detection-form" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="id_name">Model/Dataset Name</label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                <div class="form-error">{{ form.name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="id_description">Description</label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                <div class="form-error">{{ form.description.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="form-label" for="id_model_type">Model Type</label>
+                                        {{ form.model_type }}
+                                        {% if form.model_type.errors %}
+                                        <div class="form-error">{{ form.model_type.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="form-label" for="id_dataset_description">Dataset Description</label>
+                                        {{ form.dataset_description }}
+                                        {% if form.dataset_description.errors %}
+                                        <div class="form-error">{{ form.dataset_description.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="id_data_file">Dataset File (CSV)</label>
+                                <div class="file-input-container">
+                                    <span class="file-input-label">Choose a file...</span>
+                                    {{ form.data_file }}
+                                </div>
+                                <small class="form-text">Upload a CSV file containing your dataset</small>
+                                {% if form.data_file.errors %}
+                                <div class="form-error">{{ form.data_file.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="id_sensitive_attributes">Sensitive Attributes</label>
+                                {{ form.sensitive_attributes }}
+                                <small class="form-text">Enter comma-separated list of sensitive attributes to check for bias (e.g., gender,age,race)</small>
+                                {% if form.sensitive_attributes.errors %}
+                                <div class="form-error">{{ form.sensitive_attributes.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="id_model_file">Model File (Optional)</label>
+                                <div class="file-input-container">
+                                    <span class="file-input-label">Choose a file...</span>
+                                    {{ form.model_file }}
+                                </div>
+                                <small class="form-text">Upload your trained model file if available</small>
+                                {% if form.model_file.errors %}
+                                <div class="form-error">{{ form.model_file.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Analyze Bias
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- How it works -->
+            <section class="mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-question-circle"></i> How Bias Detection Works
+                    </div>
+                    <div class="card-body">
+                        <h3>Our Bias Detection Process</h3>
+                        <p>We help you identify potential bias in your AI models by analyzing your data and evaluating fairness metrics:</p>
+                        
+                        <div class="row mt-4">
+                            <div class="col">
+                                <h4><i class="fas fa-chart-pie"></i> Data Distribution Analysis</h4>
+                                <p>We examine the distribution of sensitive attributes in your data to identify representation issues.</p>
+                            </div>
+                            <div class="col">
+                                <h4><i class="fas fa-balance-scale"></i> Statistical Parity Check</h4>
+                                <p>We measure outcome differences across demographic groups to detect potential disparate impact.</p>
+                            </div>
+                            <div class="col">
+                                <h4><i class="fas fa-check-double"></i> Fairness Metrics Calculation</h4>
+                                <p>We calculate comprehensive fairness metrics like equal opportunity and accuracy parity.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4>Common Sensitive Attributes</h4>
+                            <p>When analyzing for bias, consider these common sensitive attributes:</p>
+                            <div>
+                                <span class="badge badge-primary">gender</span>
+                                <span class="badge badge-primary">age</span>
+                                <span class="badge badge-primary">race</span>
+                                <span class="badge badge-primary">ethnicity</span>
+                                <span class="badge badge-primary">religion</span>
+                                <span class="badge badge-primary">nationality</span>
+                                <span class="badge badge-primary">disability</span>
+                                <span class="badge badge-primary">marital status</span>
+                                <span class="badge badge-primary">income</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Completed analyses -->
+        <div class="col">
+            <section>
+                <h2>Completed Analyses</h2>
+                
+                {% if completed_analyses %}
+                    {% for analysis in completed_analyses %}
+                        {% if analysis.bias_analysis %}
+                        <div id="analysis-{{ analysis.id }}" class="bias-analysis" 
+                             data-analysis-id="{{ analysis.id }}" 
+                             data-bias-results="{{ analysis.bias_analysis|safe }}"
+                             data-fairness-metrics="{{ analysis.fairness_metrics|safe }}">
+                            
+                            <h3>{{ analysis.name }}</h3>
+                            <p><strong>Model Type:</strong> {{ analysis.get_model_type_display }}</p>
+                            <p><strong>Created:</strong> {{ analysis.created_at|date:"F d, Y H:i" }}</p>
+                            <p>{{ analysis.description }}</p>
+                            
+                            <!-- Tabs for visualizations -->
+                            <div class="tab-container">
+                                <ul class="tabs">
+                                    <li class="tab-item">
+                                        <a href="#summary-{{ analysis.id }}" class="tab-link active">Summary</a>
+                                    </li>
+                                    <li class="tab-item">
+                                        <a href="#distribution-{{ analysis.id }}" class="tab-link">Attribute Distribution</a>
+                                    </li>
+                                    <li class="tab-item">
+                                        <a href="#parity-{{ analysis.id }}" class="tab-link">Statistical Parity</a>
+                                    </li>
+                                    <li class="tab-item">
+                                        <a href="#fairness-{{ analysis.id }}" class="tab-link">Fairness Metrics</a>
+                                    </li>
+                                </ul>
+                                
+                                <div class="tab-content">
+                                    <!-- Summary tab -->
+                                    <div id="summary-{{ analysis.id }}" class="tab-pane active">
+                                        <div id="bias-summary-{{ analysis.id }}">
+                                            <div class="text-center">
+                                                <div class="spinner"></div>
+                                                <p>Loading bias analysis summary...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Distribution tab -->
+                                    <div id="distribution-{{ analysis.id }}" class="tab-pane">
+                                        <h3>Attribute Distribution</h3>
+                                        <p>This visualization shows the distribution of values for each sensitive attribute in your dataset:</p>
+                                        <div id="distribution-charts-{{ analysis.id }}" class="row">
+                                            <div class="text-center w-100">
+                                                <div class="spinner"></div>
+                                                <p>Loading distribution charts...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Statistical parity tab -->
+                                    <div id="parity-{{ analysis.id }}" class="tab-pane">
+                                        <h3>Statistical Parity</h3>
+                                        <p>This visualization shows differences in positive outcome rates across groups:</p>
+                                        <div id="parity-charts-{{ analysis.id }}" class="row">
+                                            <div class="text-center w-100">
+                                                <div class="spinner"></div>
+                                                <p>Loading statistical parity charts...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Fairness metrics tab -->
+                                    <div id="fairness-{{ analysis.id }}" class="tab-pane">
+                                        <h3>Fairness Metrics</h3>
+                                        <p>These visualizations show key fairness metrics across different groups:</p>
+                                        <div id="fairness-metrics-{{ analysis.id }}" class="row">
+                                            <div class="text-center w-100">
+                                                <div class="spinner"></div>
+                                                <p>Loading fairness metrics charts...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-info-circle fa-2x mb-3 text-muted"></i>
+                            <p>No completed bias analyses yet. Use the form to analyze your data.</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/bias_dashboard.js"></script>
+{% endblock %}

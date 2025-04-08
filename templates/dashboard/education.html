@@ -1,0 +1,366 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Ethics Education - AI Ethics Platform{% endblock %}
+
+{% block extra_head %}
+<style>
+    .resource-card {
+        margin-bottom: 1.5rem;
+        transition: transform 0.2s ease;
+    }
+    
+    .resource-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .resource-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+    }
+    
+    .resource-type-badge {
+        display: inline-block;
+        padding: 0.35em 0.65em;
+        font-size: 0.75em;
+        font-weight: 500;
+        color: var(--text-light);
+        background-color: var(--primary-color);
+        border-radius: 0.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    .resource-content {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 1rem;
+        background-color: var(--background-light);
+        border-radius: 4px;
+        margin-top: 1rem;
+    }
+    
+    .category-section {
+        margin-bottom: 2rem;
+    }
+    
+    .filter-container {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+    
+    .filter-btn {
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .filter-btn.active {
+        background-color: var(--primary-color);
+        color: var(--text-light);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header section -->
+<section class="dashboard-header">
+    <div class="container">
+        <h1>AI Ethics Education</h1>
+        <p>Learning resources to help you implement responsible AI</p>
+    </div>
+</section>
+
+<!-- Main content -->
+<div class="container mt-4">
+    <!-- Resource filters -->
+    <section class="mb-4">
+        <h2>Educational Resources</h2>
+        <p>Explore our collection of resources on AI ethics, fairness, transparency, and governance.</p>
+        
+        <div class="filter-container">
+            <button class="btn btn-outline filter-btn active" data-filter="all">All Resources</button>
+            {% for resource_type, display_name in resource_types %}
+            <button class="btn btn-outline filter-btn" data-filter="{{ resource_type }}">{{ display_name }}</button>
+            {% endfor %}
+        </div>
+    </section>
+    
+    <!-- Resource categories -->
+    <div class="row">
+        <div class="col">
+            <!-- Fairness & Bias Resources -->
+            <section id="fairness-bias" class="category-section">
+                <h3><i class="fas fa-balance-scale"></i> Fairness & Bias Resources</h3>
+                
+                <div class="resources-container">
+                    {% for resource in grouped_resources.article %}
+                    {% if resource.title == "Understanding Fairness Metrics" or resource.title == "Detecting Algorithmic Bias" or resource.title == "Fair Machine Learning" %}
+                    <div class="card resource-card" data-resource-type="{{ resource.resource_type }}">
+                        <div class="card-body">
+                            <div class="resource-type-badge">{{ resource.get_resource_type_display }}</div>
+                            <h4>{{ resource.title }}</h4>
+                            <p>{{ resource.description }}</p>
+                            
+                            <button class="btn btn-outline btn-sm view-resource-btn" data-resource-id="{{ resource.id }}">
+                                View Content
+                            </button>
+                            
+                            {% if resource.external_url %}
+                            <a href="{{ resource.external_url }}" target="_blank" class="btn btn-outline btn-sm">
+                                <i class="fas fa-external-link-alt"></i> External Link
+                            </a>
+                            {% endif %}
+                            
+                            <div class="resource-content" id="resource-content-{{ resource.id }}" style="display: none;">
+                                {{ resource.content|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </section>
+            
+            <!-- Transparency Resources -->
+            <section id="transparency" class="category-section">
+                <h3><i class="fas fa-search"></i> Transparency Resources</h3>
+                
+                <div class="resources-container">
+                    {% for resource in grouped_resources.guide %}
+                    {% if resource.title == "Model Explainability Guide" or resource.title == "Transparency Best Practices" %}
+                    <div class="card resource-card" data-resource-type="{{ resource.resource_type }}">
+                        <div class="card-body">
+                            <div class="resource-type-badge">{{ resource.get_resource_type_display }}</div>
+                            <h4>{{ resource.title }}</h4>
+                            <p>{{ resource.description }}</p>
+                            
+                            <button class="btn btn-outline btn-sm view-resource-btn" data-resource-id="{{ resource.id }}">
+                                View Content
+                            </button>
+                            
+                            {% if resource.external_url %}
+                            <a href="{{ resource.external_url }}" target="_blank" class="btn btn-outline btn-sm">
+                                <i class="fas fa-external-link-alt"></i> External Link
+                            </a>
+                            {% endif %}
+                            
+                            <div class="resource-content" id="resource-content-{{ resource.id }}" style="display: none;">
+                                {{ resource.content|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+        
+        <div class="col">
+            <!-- Governance Resources -->
+            <section id="governance" class="category-section">
+                <h3><i class="fas fa-gavel"></i> Governance Resources</h3>
+                
+                <div class="resources-container">
+                    {% for resource in grouped_resources.framework %}
+                    <div class="card resource-card" data-resource-type="{{ resource.resource_type }}">
+                        <div class="card-body">
+                            <div class="resource-type-badge">{{ resource.get_resource_type_display }}</div>
+                            <h4>{{ resource.title }}</h4>
+                            <p>{{ resource.description }}</p>
+                            
+                            <button class="btn btn-outline btn-sm view-resource-btn" data-resource-id="{{ resource.id }}">
+                                View Content
+                            </button>
+                            
+                            {% if resource.external_url %}
+                            <a href="{{ resource.external_url }}" target="_blank" class="btn btn-outline btn-sm">
+                                <i class="fas fa-external-link-alt"></i> External Link
+                            </a>
+                            {% endif %}
+                            
+                            <div class="resource-content" id="resource-content-{{ resource.id }}" style="display: none;">
+                                {{ resource.content|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            
+            <!-- Tools & Checklists -->
+            <section id="tools" class="category-section">
+                <h3><i class="fas fa-tools"></i> Tools & Checklists</h3>
+                
+                <div class="resources-container">
+                    {% for resource in grouped_resources.checklist %}
+                    <div class="card resource-card" data-resource-type="{{ resource.resource_type }}">
+                        <div class="card-body">
+                            <div class="resource-type-badge">{{ resource.get_resource_type_display }}</div>
+                            <h4>{{ resource.title }}</h4>
+                            <p>{{ resource.description }}</p>
+                            
+                            <button class="btn btn-outline btn-sm view-resource-btn" data-resource-id="{{ resource.id }}">
+                                View Content
+                            </button>
+                            
+                            {% if resource.external_url %}
+                            <a href="{{ resource.external_url }}" target="_blank" class="btn btn-outline btn-sm">
+                                <i class="fas fa-external-link-alt"></i> External Link
+                            </a>
+                            {% endif %}
+                            
+                            <div class="resource-content" id="resource-content-{{ resource.id }}" style="display: none;">
+                                {{ resource.content|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    {% for resource in grouped_resources.tool %}
+                    <div class="card resource-card" data-resource-type="{{ resource.resource_type }}">
+                        <div class="card-body">
+                            <div class="resource-type-badge">{{ resource.get_resource_type_display }}</div>
+                            <h4>{{ resource.title }}</h4>
+                            <p>{{ resource.description }}</p>
+                            
+                            <button class="btn btn-outline btn-sm view-resource-btn" data-resource-id="{{ resource.id }}">
+                                View Content
+                            </button>
+                            
+                            {% if resource.external_url %}
+                            <a href="{{ resource.external_url }}" target="_blank" class="btn btn-outline btn-sm">
+                                <i class="fas fa-external-link-alt"></i> External Link
+                            </a>
+                            {% endif %}
+                            
+                            <div class="resource-content" id="resource-content-{{ resource.id }}" style="display: none;">
+                                {{ resource.content|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <!-- AI Ethics Fundamentals -->
+    <section class="mb-5 mt-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-book"></i> AI Ethics Fundamentals
+            </div>
+            <div class="card-body">
+                <h3>Key Principles of Ethical AI</h3>
+                
+                <div class="row mt-4">
+                    <div class="col">
+                        <h4><i class="fas fa-balance-scale"></i> Fairness</h4>
+                        <p>AI systems should treat all individuals and groups fairly, avoiding biases that could lead to discrimination.</p>
+                        <ul>
+                            <li>Equal opportunity across demographic groups</li>
+                            <li>Avoiding disparate impact in outcomes</li>
+                            <li>Representation of diverse perspectives</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col">
+                        <h4><i class="fas fa-search"></i> Transparency</h4>
+                        <p>AI systems should be explainable and transparent, allowing stakeholders to understand how decisions are made.</p>
+                        <ul>
+                            <li>Explainable AI models and decisions</li>
+                            <li>Documentation of training data and processes</li>
+                            <li>Visibility into model performance and limitations</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col">
+                        <h4><i class="fas fa-user-shield"></i> Privacy</h4>
+                        <p>AI systems should respect individual privacy and ensure secure handling of personal data.</p>
+                        <ul>
+                            <li>Data minimization principles</li>
+                            <li>Privacy-preserving machine learning techniques</li>
+                            <li>Proper consent mechanisms</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col">
+                        <h4><i class="fas fa-shield-alt"></i> Security</h4>
+                        <p>AI systems should be secure against manipulation, attacks, and unintended behaviors.</p>
+                        <ul>
+                            <li>Robustness against adversarial attacks</li>
+                            <li>Secure development practices</li>
+                            <li>Regular security assessments</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col">
+                        <h4><i class="fas fa-gavel"></i> Accountability</h4>
+                        <p>Organizations should be accountable for their AI systems and their impacts.</p>
+                        <ul>
+                            <li>Clear governance structures</li>
+                            <li>Responsibility for AI outcomes</li>
+                            <li>Mechanisms for redress</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col">
+                        <h4><i class="fas fa-users"></i> Inclusivity</h4>
+                        <p>AI development should include diverse perspectives and be accessible to all users.</p>
+                        <ul>
+                            <li>Diverse development teams</li>
+                            <li>Inclusive design practices</li>
+                            <li>Accessibility considerations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Further Learning -->
+    <section class="mb-5">
+        <h2>Further Learning</h2>
+        <div class="row">
+            <div class="col">
+                <div class="card resource-card">
+                    <div class="card-body">
+                        <i class="fas fa-video resource-icon"></i>
+                        <h4>Video Tutorials</h4>
+                        <p>Watch our video tutorials on implementing ethical AI principles in your organization.</p>
+                        <button class="btn btn-primary btn-sm" disabled>Coming Soon</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col">
+                <div class="card resource-card">
+                    <div class="card-body">
+                        <i class="fas fa-chalkboard-teacher resource-icon"></i>
+                        <h4>Interactive Workshops</h4>
+                        <p>Join our interactive workshops to learn practical skills for AI ethics implementation.</p>
+                        <button class="btn btn-primary btn-sm" disabled>Coming Soon</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col">
+                <div class="card resource-card">
+                    <div class="card-body">
+                        <i class="fas fa-certificate resource-icon"></i>
+                        <h4>Certification Program</h4>
+                        <p>Earn a certification in AI ethics and responsible innovation.</p>
+                        <button class="btn btn-primary btn-sm" disabled>Coming Soon</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/education.js"></script>
+{% endblock %}

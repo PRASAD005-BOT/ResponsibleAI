@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Ethics Platform - Dashboard{% endblock %}
+
+{% block content %}
+<!-- Header section -->
+<section class="dashboard-header">
+    <div class="container">
+        <h1>AI Ethics Platform</h1>
+        <p>Ensuring fair, transparent, and responsible AI implementation for businesses</p>
+    </div>
+</section>
+
+<!-- Main dashboard content -->
+<div class="container mt-4">
+    <!-- Key stats -->
+    <section class="mb-5">
+        <div class="row">
+            <div class="col">
+                <div class="stat-card">
+                    <i class="fas fa-balance-scale ethics-icon"></i>
+                    <div class="stat-value">{{ recent_analyses.count }}</div>
+                    <p class="stat-label">AI Models Analyzed</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="stat-card">
+                    <i class="fas fa-search ethics-icon"></i>
+                    <div class="stat-value">{{ case_studies_count }}</div>
+                    <p class="stat-label">Case Studies</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="stat-card">
+                    <i class="fas fa-graduation-cap ethics-icon"></i>
+                    <div class="stat-value">{{ resources_count }}</div>
+                    <p class="stat-label">Educational Resources</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Platform features -->
+    <section class="mb-5">
+        <h2>Our Tools & Features</h2>
+        <div class="row mt-3">
+            <div class="col">
+                <div class="card ethics-card">
+                    <div class="card-header">Bias Detection</div>
+                    <div class="card-body">
+                        <i class="fas fa-balance-scale ethics-icon"></i>
+                        <h3>Identify & Mitigate Bias</h3>
+                        <p>Our bias detection tools use advanced algorithms to identify potential biases in your AI systems.</p>
+                        <ul class="feature-list">
+                            <li>Detailed bias metrics and visualizations</li>
+                            <li>Demographic analysis across sensitive attributes</li>
+                            <li>Statistical parity and fairness evaluations</li>
+                            <li>Mitigation recommendations</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'dashboard:bias_detection' %}" class="btn btn-primary">Start Analysis</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card ethics-card">
+                    <div class="card-header">Transparency Tools</div>
+                    <div class="card-body">
+                        <i class="fas fa-search ethics-icon"></i>
+                        <h3>Explain AI Decisions</h3>
+                        <p>Make AI systems more transparent and understandable with our explainability tools.</p>
+                        <ul class="feature-list">
+                            <li>Feature importance analysis</li>
+                            <li>Model complexity evaluation</li>
+                            <li>Feature interaction detection</li>
+                            <li>User-friendly explanations</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'dashboard:transparency' %}" class="btn btn-primary">Analyze Transparency</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card ethics-card">
+                    <div class="card-header">AI Governance</div>
+                    <div class="card-body">
+                        <i class="fas fa-gavel ethics-icon"></i>
+                        <h3>Responsible AI Governance</h3>
+                        <p>Implement ethical AI governance with frameworks and templates designed for your business.</p>
+                        <ul class="feature-list">
+                            <li>Ready-to-use governance frameworks</li>
+                            <li>Industry-specific guidance</li>
+                            <li>Regulatory compliance templates</li>
+                            <li>Implementation roadmaps</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'dashboard:governance' %}" class="btn btn-primary">Explore Frameworks</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Recent analyses -->
+    {% if recent_analyses %}
+    <section class="mb-5">
+        <h2>Recent AI Analyses</h2>
+        <div class="card">
+            <div class="card-body">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th>Model Name</th>
+                            <th>Type</th>
+                            <th>Analysis Type</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for analysis in recent_analyses %}
+                        <tr>
+                            <td>{{ analysis.name }}</td>
+                            <td>{{ analysis.get_model_type_display }}</td>
+                            <td>
+                                {% if analysis.bias_analysis %}Bias Detection{% endif %}
+                                {% if analysis.transparency_analysis %}Model Transparency{% endif %}
+                            </td>
+                            <td>{{ analysis.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                {% if analysis.bias_analysis %}
+                                <a href="{% url 'dashboard:bias_detection' %}#analysis-{{ analysis.id }}" class="btn btn-outline btn-sm">View Report</a>
+                                {% elif analysis.transparency_analysis %}
+                                <a href="{% url 'dashboard:transparency' %}#analysis-{{ analysis.id }}" class="btn btn-outline btn-sm">View Report</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+    
+    <!-- Educational resources -->
+    <section class="mb-5">
+        <h2>Educational Resources</h2>
+        <div class="row mt-3">
+            <div class="col">
+                <div class="card resource-card">
+                    <div class="card-body">
+                        <h3>AI Ethics Guidelines</h3>
+                        <p>Comprehensive guidelines for ethical AI implementation in business contexts.</p>
+                        <a href="{% url 'dashboard:education' %}" class="btn btn-outline">Learn More</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card resource-card">
+                    <div class="card-body">
+                        <h3>Case Studies</h3>
+                        <p>Real-world examples of AI ethics challenges and solutions across industries.</p>
+                        <a href="{% url 'dashboard:case_studies' %}" class="btn btn-outline">View Case Studies</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card resource-card">
+                    <div class="card-body">
+                        <h3>Fairness Metrics</h3>
+                        <p>Deep dive into fairness metrics and how to apply them to your AI systems.</p>
+                        <a href="{% url 'dashboard:education' %}" class="btn btn-outline">Explore Metrics</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

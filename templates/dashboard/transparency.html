@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Transparency Analyzer - AI Ethics Platform{% endblock %}
+
+{% block extra_head %}
+<style>
+    .file-input-container {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+    }
+    
+    .file-input-container input[type=file] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+    }
+    
+    .file-input-label {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background-color: var(--background-light);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        font-size: 1rem;
+        cursor: pointer;
+    }
+    
+    .column-suggestions {
+        margin-top: 0.5rem;
+    }
+    
+    .column-suggestion {
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+    }
+    
+    .transparency-analysis {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background-color: var(--background-white);
+    }
+    
+    .chart-wrapper {
+        margin-bottom: 1.5rem;
+        min-height: 400px;
+    }
+    
+    .model-limitation {
+        background-color: rgba(255, 152, 0, 0.1);
+        border-left: 3px solid var(--warning-color);
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Header section -->
+<section class="dashboard-header">
+    <div class="container">
+        <h1>AI Transparency Analyzer</h1>
+        <p>Make your AI systems more explainable and transparent</p>
+    </div>
+</section>
+
+<!-- Main content -->
+<div class="container mt-4">
+    <div class="row">
+        <div class="col">
+            <!-- Transparency analyzer form -->
+            <section class="mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-search"></i> Analyze Model Transparency
+                    </div>
+                    <div class="card-body">
+                        <form id="transparency-analyzer-form" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="form-label" for="id_model_type">Model Type</label>
+                                        {{ form.model_type }}
+                                        {% if form.model_type.errors %}
+                                        <div class="form-error">{{ form.model_type.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label class="form-label" for="id_explanation_level">Level of Explanation</label>
+                                        {{ form.explanation_level }}
+                                        {% if form.explanation_level.errors %}
+                                        <div class="form-error">{{ form.explanation_level.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="id_data_file">Dataset File (CSV)</label>
+                                <div class="file-input-container">
+                                    <span class="file-input-label">Choose a file...</span>
+                                    {{ form.data_file }}
+                                </div>
+                                <small class="form-text">Upload a CSV file containing your dataset</small>
+                                {% if form.data_file.errors %}
+                                <div class="form-error">{{ form.data_file.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="id_target_column">Target/Outcome Column</label>
+                                {{ form.target_column }}
+                                <small class="form-text">Enter the name of the column containing the target/prediction values</small>
+                                {% if form.target_column.errors %}
+                                <div class="form-error">{{ form.target_column.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="id_model_file">Model File (Optional)</label>
+                                <div class="file-input-container">
+                                    <span class="file-input-label">Choose a file...</span>
+                                    {{ form.model_file }}
+                                </div>
+                                <small class="form-text">Upload your trained model file if available</small>
+                                {% if form.model_file.errors %}
+                                <div class="form-error">{{ form.model_file.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-search"></i> Analyze Transparency
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- How it works -->
+            <section class="mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-question-circle"></i> Understanding Model Transparency
+                    </div>
+                    <div class="card-body">
+                        <h3>Making AI Decisions Explainable</h3>
+                        <p>Transparency in AI is about making model decisions understandable to humans. Our analyzer helps you:</p>
+                        
+                        <div class="row mt-4">
+                            <div class="col">
+                                <h4><i class="fas fa-chart-bar"></i> Feature Importance</h4>
+                                <p>Identify which features most heavily influence your model's decisions.</p>
+                            </div>
+                            <div class="col">
+                                <h4><i class="fas fa-project-diagram"></i> Feature Interactions</h4>
+                                <p>Discover how different features interact to produce specific outcomes.</p>
+                            </div>
+                            <div class="col">
+                                <h4><i class="fas fa-exclamation-triangle"></i> Model Limitations</h4>
+                                <p>Understand the constraints and limitations of your AI model.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4>Explanation Levels</h4>
+                            <ul>
+                                <li><strong>Basic:</strong> Feature importance analysis and simple explanations</li>
+                                <li><strong>Intermediate:</strong> Includes SHAP values and partial dependence plots</li>
+                                <li><strong>Advanced:</strong> Comprehensive explainability with counterfactual examples</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Completed analyses -->
+        <div class="col">
+            <section>
+                <h2>Completed Analyses</h2>
+                
+                {% if completed_analyses %}
+                    {% for analysis in completed_analyses %}
+                        {% if analysis.transparency_analysis %}
+                        <div id="analysis-{{ analysis.id }}" class="transparency-analysis" 
+                             data-analysis-id="{{ analysis.id }}" 
+                             data-transparency-results="{{ analysis.transparency_analysis|safe }}">
+                            
+                            <h3>{{ analysis.name }}</h3>
+                            <p><strong>Model Type:</strong> {{ analysis.get_model_type_display }}</p>
+                            <p><strong>Created:</strong> {{ analysis.created_at|date:"F d, Y H:i" }}</p>
+                            <p>{{ analysis.description }}</p>
+                            
+                            <!-- Tabs for visualizations -->
+                            <div class="tab-container">
+                                <ul class="tabs">
+                                    <li class="tab-item">
+                                        <a href="#summary-{{ analysis.id }}" class="tab-link active">Summary</a>
+                                    </li>
+                                    <li class="tab-item">
+                                        <a href="#feature-importance-tab-{{ analysis.id }}" class="tab-link">Feature Importance</a>
+                                    </li>
+                                    <li class="tab-item">
+                                        <a href="#feature-interactions-tab-{{ analysis.id }}" class="tab-link">Feature Interactions</a>
+                                    </li>
+                                </ul>
+                                
+                                <div class="tab-content">
+                                    <!-- Summary tab -->
+                                    <div id="summary-{{ analysis.id }}" class="tab-pane active">
+                                        <div id="transparency-summary-{{ analysis.id }}">
+                                            <div class="text-center">
+                                                <div class="spinner"></div>
+                                                <p>Loading transparency analysis summary...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Feature importance tab -->
+                                    <div id="feature-importance-tab-{{ analysis.id }}" class="tab-pane">
+                                        <h3>Feature Importance</h3>
+                                        <p>This visualization shows which features have the most influence on your model's predictions:</p>
+                                        <div id="feature-importance-{{ analysis.id }}" class="chart-wrapper">
+                                            <div class="text-center">
+                                                <div class="spinner"></div>
+                                                <p>Loading feature importance chart...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Feature interactions tab -->
+                                    <div id="feature-interactions-tab-{{ analysis.id }}" class="tab-pane">
+                                        <h3>Feature Interactions</h3>
+                                        <p>This visualization shows how features interact with each other in your model:</p>
+                                        <div id="feature-interactions-{{ analysis.id }}" class="chart-wrapper">
+                                            <div class="text-center">
+                                                <div class="spinner"></div>
+                                                <p>Loading feature interactions chart...</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-info-circle fa-2x mb-3 text-muted"></i>
+                            <p>No completed transparency analyses yet. Use the form to analyze your model.</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </section>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/static/js/transparency_analyzer.js"></script>
+{% endblock %}

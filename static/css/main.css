@@ -1,0 +1,681 @@
+/* AI Ethics Platform - Main CSS file */
+
+/* Global styles */
+:root {
+  --primary-color: #3f51b5;
+  --primary-light: #7986cb;
+  --primary-dark: #303f9f;
+  --secondary-color: #ff4081;
+  --secondary-light: #ff80ab;
+  --secondary-dark: #c51162;
+  --success-color: #4caf50;
+  --error-color: #f44336;
+  --warning-color: #ff9800;
+  --info-color: #2196f3;
+  --text-dark: #212121;
+  --text-medium: #757575;
+  --text-light: #fafafa;
+  --background-light: #f5f5f5;
+  --background-white: #ffffff;
+  --border-color: #e0e0e0;
+  --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--text-dark);
+  background-color: var(--background-light);
+  margin: 0;
+  padding: 0;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+  margin-top: 0;
+  color: var(--text-dark);
+}
+
+h1 {
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
+
+/* Layout */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.col {
+  flex: 1 0 0%;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem 0;
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--text-light);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-brand i {
+  margin-right: 0.5rem;
+}
+
+.navbar-nav {
+  display: flex;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  margin-left: 1.5rem;
+}
+
+.nav-link {
+  color: var(--text-light);
+  text-decoration: none;
+  font-weight: 400;
+  padding: 0.5rem 0;
+  position: relative;
+}
+
+.nav-link:after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: var(--text-light);
+  transition: width 0.2s ease;
+}
+
+.nav-link:hover:after, .nav-link.active:after {
+  width: 100%;
+}
+
+/* Cards */
+.card {
+  background-color: var(--background-white);
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.card-header {
+  background-color: var(--primary-light);
+  color: var(--text-light);
+  padding: 1rem 1.5rem;
+  font-weight: 500;
+  font-size: 1.2rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-footer {
+  background-color: var(--background-light);
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  border: 1px solid transparent;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--text-light);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: var(--text-light);
+}
+
+.btn-secondary:hover {
+  background-color: var(--secondary-dark);
+  text-decoration: none;
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  color: var(--text-light);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-outline:hover {
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  text-decoration: none;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+}
+
+.btn-block {
+  display: block;
+  width: 100%;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--text-dark);
+  background-color: var(--background-white);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(63, 81, 181, 0.25);
+}
+
+.form-text {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: var(--text-medium);
+}
+
+.form-error {
+  color: var(--error-color);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* Alerts */
+.alert {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.alert-success {
+  background-color: rgba(76, 175, 80, 0.1);
+  border-color: rgba(76, 175, 80, 0.2);
+  color: var(--success-color);
+}
+
+.alert-error {
+  background-color: rgba(244, 67, 54, 0.1);
+  border-color: rgba(244, 67, 54, 0.2);
+  color: var(--error-color);
+}
+
+.alert-warning {
+  background-color: rgba(255, 152, 0, 0.1);
+  border-color: rgba(255, 152, 0, 0.2);
+  color: var(--warning-color);
+}
+
+.alert-info {
+  background-color: rgba(33, 150, 243, 0.1);
+  border-color: rgba(33, 150, 243, 0.2);
+  color: var(--info-color);
+}
+
+/* Dashboard specific styles */
+.dashboard-header {
+  margin-bottom: 2rem;
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  padding: 2rem 0;
+}
+
+.dashboard-header h1 {
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-header p {
+  margin-bottom: 0;
+  opacity: 0.9;
+}
+
+.stat-card {
+  background-color: var(--background-white);
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.stat-label {
+  font-size: 1rem;
+  color: var(--text-medium);
+  margin: 0;
+}
+
+.chart-container {
+  position: relative;
+  margin: 0 auto;
+  height: 400px;
+  margin-bottom: 2rem;
+}
+
+/* Footer */
+.footer {
+  background-color: var(--primary-dark);
+  color: var(--text-light);
+  padding: 3rem 0;
+  margin-top: 3rem;
+}
+
+.footer h3 {
+  color: var(--text-light);
+  margin-bottom: 1.2rem;
+}
+
+.footer-links {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: var(--text-light);
+  text-decoration: underline;
+}
+
+.copyright {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
+}
+
+/* Specific components for AI Ethics Platform */
+.ethics-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ethics-card .card-body {
+  flex: 1;
+}
+
+.ethics-icon {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.feature-list {
+  padding-left: 1.2rem;
+}
+
+.feature-list li {
+  margin-bottom: 0.5rem;
+}
+
+.metric-label {
+  font-weight: 500;
+  color: var(--text-medium);
+}
+
+.metric-value {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.high-risk {
+  color: var(--error-color);
+}
+
+.medium-risk {
+  color: var(--warning-color);
+}
+
+.low-risk {
+  color: var(--success-color);
+}
+
+.bias-metric-card {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  border-left: 4px solid var(--primary-color);
+}
+
+.resource-card {
+  transition: transform 0.2s ease;
+}
+
+.resource-card:hover {
+  transform: translateY(-5px);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  font-size: 0.75em;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--text-light);
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.badge-primary {
+  background-color: var(--primary-color);
+}
+
+.badge-secondary {
+  background-color: var(--secondary-color);
+}
+
+.badge-success {
+  background-color: var(--success-color);
+}
+
+.badge-warning {
+  background-color: var(--warning-color);
+}
+
+.badge-info {
+  background-color: var(--info-color);
+}
+
+.assessment-box {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+
+.assessment-box.high-risk {
+  background-color: rgba(244, 67, 54, 0.1);
+  border: 1px solid rgba(244, 67, 54, 0.2);
+}
+
+.assessment-box.medium-risk {
+  background-color: rgba(255, 152, 0, 0.1);
+  border: 1px solid rgba(255, 152, 0, 0.2);
+}
+
+.assessment-box.low-risk {
+  background-color: rgba(76, 175, 80, 0.1);
+  border: 1px solid rgba(76, 175, 80, 0.2);
+}
+
+.tab-container {
+  margin-bottom: 2rem;
+}
+
+.tabs {
+  display: flex;
+  list-style-type: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tab-item {
+  margin-right: 2rem;
+  padding-bottom: 0.5rem;
+}
+
+.tab-link {
+  color: var(--text-medium);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  position: relative;
+}
+
+.tab-link:after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 3px;
+  bottom: -0.5rem;
+  left: 0;
+  background-color: var(--primary-color);
+  transition: width 0.2s ease;
+}
+
+.tab-link:hover {
+  color: var(--primary-color);
+}
+
+.tab-link.active {
+  color: var(--primary-color);
+}
+
+.tab-link.active:after {
+  width: 100%;
+}
+
+.tab-content {
+  padding: 1rem 0;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+.code-block {
+  background-color: #f5f5f5;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-family: 'Courier New', Courier, monospace;
+  margin-bottom: 1rem;
+}
+
+/* Spinner/Loader */
+.spinner {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  vertical-align: text-bottom;
+  border: 0.25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border .75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
+}
+
+/* Tooltips */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: var(--text-dark);
+  color: var(--text-light);
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Progress bars */
+.progress {
+  height: 8px;
+  overflow: hidden;
+  background-color: var(--background-light);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 4px;
+  background-color: var(--primary-color);
+}
+
+/* Utility classes */
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+.mb-5 { margin-bottom: 3rem; }
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+.mt-5 { margin-top: 3rem; }
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-muted { color: var(--text-medium); }
+
+.d-flex { display: flex; }
+.flex-column { flex-direction: column; }
+.justify-content-between { justify-content: space-between; }
+.align-items-center { align-items: center; }
+.flex-wrap { flex-wrap: wrap; }
+
+.w-100 { width: 100%; }
+.h-100 { height: 100%; }
