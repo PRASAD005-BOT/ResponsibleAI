@@ -2,12 +2,115 @@
 
 {% block title %}AI Ethics Platform - Dashboard{% endblock %}
 
+{% block extra_head %}
+<style>
+  /* Add custom styles for the dashboard */
+  :root {
+    --primary-color-rgb: 63, 81, 181; /* RGB values for var(--primary-color) */
+  }
+
+  .dashboard-header {
+    position: relative;
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  #header-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+  
+  .dashboard-header .container {
+    position: relative;
+    z-index: 2;
+  }
+
+  .ethics-card {
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .ethics-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  }
+
+  /* Glowing effect for stats */
+  .pulse-hover {
+    box-shadow: 0 0 10px rgba(var(--primary-color-rgb), 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .pulse-hover:hover {
+    box-shadow: 0 0 20px rgba(var(--primary-color-rgb), 0.3), 
+                0 0 40px rgba(var(--primary-color-rgb), 0.1);
+  }
+  
+  /* Moving wave effect at the bottom of the header */
+  .wave-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    overflow: hidden;
+  }
+  
+  .wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 134" xmlns="http://www.w3.org/2000/svg"><path fill="rgba(255, 255, 255, 0.2)" d="M0 98l40-10.7C80 76.7 160 54.3 240 43.3 320 32.3 400 32.7 480 37.3c80 4.7 160 13.7 240 16 80 2.3 160-2 240-5.3 80-3.3 160-5.7 240-16C1120 21.7 1160 10.3 1200 4.7l40-5.4V134H0V98z"></path></svg>');
+    background-repeat: repeat-x;
+    background-position: 0 bottom;
+    background-size: 1200px 100%;
+    animation: wave 20s linear infinite;
+  }
+  
+  .wave:nth-child(2) {
+    bottom: 0;
+    animation: wave 20s linear reverse infinite;
+    opacity: 0.5;
+  }
+  
+  .wave:nth-child(3) {
+    bottom: 0;
+    animation: wave 15s linear infinite;
+    opacity: 0.2;
+  }
+  
+  @keyframes wave {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Header section -->
 <section class="dashboard-header">
+    <div id="header-particles"></div>
     <div class="container">
-        <h1>AI Ethics Platform</h1>
-        <p>Ensuring fair, transparent, and responsible AI implementation for businesses</p>
+        <h1 class="typing-effect" data-speed="70">AI Ethics Platform</h1>
+        <p class="fade-in">Ensuring fair, transparent, and responsible AI implementation for businesses</p>
+    </div>
+    <div class="wave-container">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
     </div>
 </section>
 
@@ -17,23 +120,23 @@
     <section class="mb-5">
         <div class="row">
             <div class="col">
-                <div class="stat-card">
-                    <i class="fas fa-balance-scale ethics-icon"></i>
-                    <div class="stat-value">{{ recent_analyses.count }}</div>
+                <div class="stat-card pulse-hover">
+                    <i class="fas fa-balance-scale ethics-icon animated-icon"></i>
+                    <div class="stat-value" data-target="{{ recent_analyses.count }}" data-duration="1500">{{ recent_analyses.count }}</div>
                     <p class="stat-label">AI Models Analyzed</p>
                 </div>
             </div>
             <div class="col">
-                <div class="stat-card">
-                    <i class="fas fa-search ethics-icon"></i>
-                    <div class="stat-value">{{ case_studies_count }}</div>
+                <div class="stat-card pulse-hover">
+                    <i class="fas fa-search ethics-icon animated-icon"></i>
+                    <div class="stat-value" data-target="{{ case_studies_count }}" data-duration="1500">{{ case_studies_count }}</div>
                     <p class="stat-label">Case Studies</p>
                 </div>
             </div>
             <div class="col">
-                <div class="stat-card">
-                    <i class="fas fa-graduation-cap ethics-icon"></i>
-                    <div class="stat-value">{{ resources_count }}</div>
+                <div class="stat-card pulse-hover">
+                    <i class="fas fa-graduation-cap ethics-icon animated-icon"></i>
+                    <div class="stat-value" data-target="{{ resources_count }}" data-duration="1500">{{ resources_count }}</div>
                     <p class="stat-label">Educational Resources</p>
                 </div>
             </div>
@@ -41,17 +144,17 @@
     </section>
     
     <!-- Platform features -->
-    <section class="mb-5">
+    <section class="mb-5 fade-in-section">
         <h2>Our Tools & Features</h2>
-        <div class="row mt-3">
+        <div class="row mt-3 staggered-container">
             <div class="col">
                 <div class="card ethics-card">
                     <div class="card-header">Bias Detection</div>
                     <div class="card-body">
-                        <i class="fas fa-balance-scale ethics-icon"></i>
+                        <i class="fas fa-balance-scale ethics-icon animated-icon"></i>
                         <h3>Identify & Mitigate Bias</h3>
                         <p>Our bias detection tools use advanced algorithms to identify potential biases in your AI systems.</p>
-                        <ul class="feature-list">
+                        <ul class="feature-list staggered-container">
                             <li>Detailed bias metrics and visualizations</li>
                             <li>Demographic analysis across sensitive attributes</li>
                             <li>Statistical parity and fairness evaluations</li>
@@ -59,7 +162,7 @@
                         </ul>
                     </div>
                     <div class="card-footer">
-                        <a href="{% url 'dashboard:bias_detection' %}" class="btn btn-primary">Start Analysis</a>
+                        <a href="{% url 'dashboard:bias_detection' %}" class="btn btn-primary ripple">Start Analysis</a>
                     </div>
                 </div>
             </div>
@@ -67,10 +170,10 @@
                 <div class="card ethics-card">
                     <div class="card-header">Transparency Tools</div>
                     <div class="card-body">
-                        <i class="fas fa-search ethics-icon"></i>
+                        <i class="fas fa-search ethics-icon animated-icon"></i>
                         <h3>Explain AI Decisions</h3>
                         <p>Make AI systems more transparent and understandable with our explainability tools.</p>
-                        <ul class="feature-list">
+                        <ul class="feature-list staggered-container">
                             <li>Feature importance analysis</li>
                             <li>Model complexity evaluation</li>
                             <li>Feature interaction detection</li>
@@ -78,7 +181,7 @@
                         </ul>
                     </div>
                     <div class="card-footer">
-                        <a href="{% url 'dashboard:transparency' %}" class="btn btn-primary">Analyze Transparency</a>
+                        <a href="{% url 'dashboard:transparency' %}" class="btn btn-primary ripple">Analyze Transparency</a>
                     </div>
                 </div>
             </div>
@@ -86,10 +189,10 @@
                 <div class="card ethics-card">
                     <div class="card-header">AI Governance</div>
                     <div class="card-body">
-                        <i class="fas fa-gavel ethics-icon"></i>
+                        <i class="fas fa-gavel ethics-icon animated-icon"></i>
                         <h3>Responsible AI Governance</h3>
                         <p>Implement ethical AI governance with frameworks and templates designed for your business.</p>
-                        <ul class="feature-list">
+                        <ul class="feature-list staggered-container">
                             <li>Ready-to-use governance frameworks</li>
                             <li>Industry-specific guidance</li>
                             <li>Regulatory compliance templates</li>
@@ -97,7 +200,7 @@
                         </ul>
                     </div>
                     <div class="card-footer">
-                        <a href="{% url 'dashboard:governance' %}" class="btn btn-primary">Explore Frameworks</a>
+                        <a href="{% url 'dashboard:governance' %}" class="btn btn-primary ripple">Explore Frameworks</a>
                     </div>
                 </div>
             </div>
@@ -106,9 +209,9 @@
     
     <!-- Recent analyses -->
     {% if recent_analyses %}
-    <section class="mb-5">
+    <section class="mb-5 fade-in-section">
         <h2>Recent AI Analyses</h2>
-        <div class="card">
+        <div class="card glassmorphism">
             <div class="card-body">
                 <table class="w-100">
                     <thead>
@@ -120,21 +223,25 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="staggered-container">
                         {% for analysis in recent_analyses %}
-                        <tr>
+                        <tr class="staggered-item">
                             <td>{{ analysis.name }}</td>
                             <td>{{ analysis.get_model_type_display }}</td>
                             <td>
-                                {% if analysis.bias_analysis %}Bias Detection{% endif %}
-                                {% if analysis.transparency_analysis %}Model Transparency{% endif %}
+                                {% if analysis.bias_analysis %}
+                                <span class="badge badge-primary">Bias Detection</span>
+                                {% endif %}
+                                {% if analysis.transparency_analysis %}
+                                <span class="badge badge-secondary">Model Transparency</span>
+                                {% endif %}
                             </td>
                             <td>{{ analysis.created_at|date:"M d, Y" }}</td>
                             <td>
                                 {% if analysis.bias_analysis %}
-                                <a href="{% url 'dashboard:bias_detection' %}#analysis-{{ analysis.id }}" class="btn btn-outline btn-sm">View Report</a>
+                                <a href="{% url 'dashboard:bias_detection' %}#analysis-{{ analysis.id }}" class="btn btn-outline btn-sm ripple">View Report</a>
                                 {% elif analysis.transparency_analysis %}
-                                <a href="{% url 'dashboard:transparency' %}#analysis-{{ analysis.id }}" class="btn btn-outline btn-sm">View Report</a>
+                                <a href="{% url 'dashboard:transparency' %}#analysis-{{ analysis.id }}" class="btn btn-outline btn-sm ripple">View Report</a>
                                 {% endif %}
                             </td>
                         </tr>
@@ -147,37 +254,95 @@
     {% endif %}
     
     <!-- Educational resources -->
-    <section class="mb-5">
+    <section class="mb-5 fade-in-section">
         <h2>Educational Resources</h2>
-        <div class="row mt-3">
+        <div class="row mt-3 staggered-container">
             <div class="col">
-                <div class="card resource-card">
+                <div class="card resource-card tilt-effect">
                     <div class="card-body">
+                        <i class="fas fa-book-open ethics-icon animated-icon"></i>
                         <h3>AI Ethics Guidelines</h3>
                         <p>Comprehensive guidelines for ethical AI implementation in business contexts.</p>
-                        <a href="{% url 'dashboard:education' %}" class="btn btn-outline">Learn More</a>
+                        <a href="{% url 'dashboard:education' %}" class="btn btn-outline ripple">Learn More</a>
                     </div>
                 </div>
             </div>
             <div class="col">
-                <div class="card resource-card">
+                <div class="card resource-card tilt-effect">
                     <div class="card-body">
+                        <i class="fas fa-briefcase ethics-icon animated-icon"></i>
                         <h3>Case Studies</h3>
                         <p>Real-world examples of AI ethics challenges and solutions across industries.</p>
-                        <a href="{% url 'dashboard:case_studies' %}" class="btn btn-outline">View Case Studies</a>
+                        <a href="{% url 'dashboard:case_studies' %}" class="btn btn-outline ripple">View Case Studies</a>
                     </div>
                 </div>
             </div>
             <div class="col">
-                <div class="card resource-card">
+                <div class="card resource-card tilt-effect">
                     <div class="card-body">
+                        <i class="fas fa-chart-bar ethics-icon animated-icon"></i>
                         <h3>Fairness Metrics</h3>
                         <p>Deep dive into fairness metrics and how to apply them to your AI systems.</p>
-                        <a href="{% url 'dashboard:education' %}" class="btn btn-outline">Explore Metrics</a>
+                        <a href="{% url 'dashboard:education' %}" class="btn btn-outline ripple">Explore Metrics</a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Initialize particle effect for header
+document.addEventListener('DOMContentLoaded', function() {
+    // Add particles to header
+    addParticleBackground('header-particles', {
+        particleCount: 80,
+        color: 'rgba(255, 255, 255, 0.3)',
+        minSize: 1,
+        maxSize: 4,
+        speed: 0.5
+    });
+
+    // Create 3D effect for feature cards
+    create3DCardEffect('.ethics-card');
+    create3DCardEffect('.resource-card');
+
+    // GSAP animations for smoother effects
+    if (typeof gsap !== 'undefined') {
+        // Animate stat cards
+        gsap.from('.stat-card', {
+            y: 50,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: 'power2.out',
+            delay: 0.5
+        });
+
+        // Animate header text
+        gsap.from('.dashboard-header .container', {
+            y: 30,
+            opacity: 0,
+            duration: 1,
+            ease: 'power2.out'
+        });
+
+        // Animate feature sections
+        gsap.from('.ethics-card', {
+            y: 50,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.2,
+            ease: 'power2.out',
+            scrollTrigger: {
+                trigger: '.ethics-card',
+                start: 'top bottom-=100',
+                toggleActions: 'play none none none'
+            }
+        });
+    }
+});
+</script>
 {% endblock %}
