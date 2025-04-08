@@ -15,4 +15,5 @@ urlpatterns = [
     path('api/analyze-bias/', views.analyze_bias, name='analyze_bias'),
     path('api/analyze-model-transparency/', views.analyze_model_transparency, name='analyze_model_transparency'),
     path('api/get-governance-framework/<str:framework_type>/', views.get_governance_framework, name='get_governance_framework'),
+    path('api/analyze-fairness-metrics/', views.analyze_fairness_metrics, name='analyze_fairness_metrics'),
 ]

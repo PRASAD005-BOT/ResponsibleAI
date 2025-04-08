@@ -1,5 +1,6 @@
 """
 Bias detection and fairness metrics calculation for AI models
+Includes Gemini AI-powered analysis for enhanced ethical insights
 """
 
 import pandas as pd
@@ -7,6 +8,9 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import confusion_matrix
 import scipy.stats as stats
+
+# Import Gemini AI module
+from . import gemini_ai
 
 def detect_bias_in_data(df, sensitive_attributes, target_column=None):
     """
@@ -202,6 +206,70 @@ def check_statistical_parity(df, sensitive_attr, target_column):
     
     return results
 
+
+def perform_ai_ethics_analysis(df, sensitive_attributes, target_column=None):
+    """
+    Uses Google Gemini AI to perform advanced ethical analysis on dataset
+    
+    Parameters:
+    -----------
+    df : pandas.DataFrame
+        The dataset to analyze
+    sensitive_attributes : list
+        List of column names that contain sensitive attributes
+    target_column : str, optional
+        Target/outcome column if available
+        
+    Returns:
+    --------
+    dict
+        AI-generated ethics analysis results
+    """
+    try:
+        # Prepare dataset info for the AI
+        df_info = {
+            'columns': list(df.columns),
+            'shape': df.shape,
+            'data_types': {col: str(df[col].dtype) for col in df.columns},
+            'missing_values': {col: int(df[col].isna().sum()) for col in df.columns},
+            'sample_rows': df.head(5).to_dict(orient='records'),
+            'statistics': {}
+        }
+        
+        # Add statistics for each column
+        for col in df.columns:
+            if df[col].dtype.kind in 'ifc':  # numeric columns
+                df_info['statistics'][col] = {
+                    'mean': float(df[col].mean()),
+                    'median': float(df[col].median()),
+                    'min': float(df[col].min()),
+                    'max': float(df[col].max()),
+                    'std': float(df[col].std())
+                }
+            else:  # categorical columns
+                df_info['statistics'][col] = {
+                    'unique_values': int(df[col].nunique()),
+                    'most_common': df[col].value_counts().nlargest(3).to_dict()
+                }
+        
+        # Add target column info if available
+        if target_column and target_column in df.columns:
+            df_info['target_column'] = {
+                'name': target_column,
+                'type': str(df[target_column].dtype),
+                'distribution': df[target_column].value_counts().to_dict() if df[target_column].dtype.kind not in 'ifc' else None
+            }
+        
+        # Call Gemini AI for analysis
+        ai_analysis = gemini_ai.analyze_dataset_ethics(df_info, sensitive_attributes)
+        return ai_analysis
+        
+    except Exception as e:
+        # Return error information if AI analysis fails
+        return {
+            'error': str(e),
+            'message': 'AI-powered ethics analysis could not be completed'
+        }
 
 def calculate_fairness_metrics(df, sensitive_attributes, target_column=None, prediction_column=None):
     """

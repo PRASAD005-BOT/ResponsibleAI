@@ -126,3 +126,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # For production environments, enable SSL
 if not DEBUG:
     DATABASES['default']['OPTIONS'] = {'sslmode': 'require'}
+    
+# Google Gemini AI configuration
+GOOGLE_GEMINI_API_KEY = os.environ.get('GOOGLE_GEMINI_API_KEY')
+GEMINI_MODEL_NAME = 'gemini-1.5-pro'  # Use the most advanced available model

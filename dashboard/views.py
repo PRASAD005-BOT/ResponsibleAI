@@ -9,13 +9,22 @@ import io
 
 from .models import ModelAnalysis, CaseStudy, EducationalResource
 from .forms import ModelUploadForm, TransparencyAnalyzerForm
-from .bias_detection import detect_bias_in_data, calculate_fairness_metrics
+from .bias_detection import detect_bias_in_data, calculate_fairness_metrics, perform_ai_ethics_analysis
 from .transparency import analyze_model_explainability, generate_feature_importance
 from .governance import get_governance_template
+from . import gemini_ai
+from . import sample_data
 
 
 def index(request):
     """Main dashboard view"""
+    # Load sample data if database is empty
+    if (ModelAnalysis.objects.count() == 0 and 
+        CaseStudy.objects.count() == 0 and 
+        EducationalResource.objects.count() == 0):
+        sample_data.populate_sample_data()
+        messages.info(request, "Sample data has been loaded for demonstration purposes.")
+    
     context = {
         'title': 'AI Ethics Platform',
         'recent_analyses': ModelAnalysis.objects.order_by('-created_at')[:5],
@@ -46,6 +55,13 @@ def bias_detection(request):
                 # Detect bias in the data
                 bias_results = detect_bias_in_data(df, sensitive_attrs)
                 fairness_metrics = calculate_fairness_metrics(df, sensitive_attrs)
+                
+                # Perform AI-powered ethics analysis
+                ai_ethics_analysis = perform_ai_ethics_analysis(df, sensitive_attrs)
+                
+                # Merge AI analysis with bias results
+                if 'error' not in ai_ethics_analysis:
+                    bias_results['ai_ethics_analysis'] = ai_ethics_analysis
                 
                 # Save results to model
                 model_analysis.bias_analysis = bias_results
@@ -94,6 +110,33 @@ def transparency(request):
                     model_type,
                     explanation_level
                 )
+                
+                # Add AI-powered insights for enhanced transparency
+                feature_importances = {}
+                if 'feature_importance' in explainability_results:
+                    feature_importances = explainability_results['feature_importance']
+                
+                # Prepare model info for AI analysis
+                model_info = {
+                    'model_type': model_type,
+                    'data_shape': df.shape,
+                    'target_column': target_column,
+                    'explanation_level': explanation_level
+                }
+                
+                # Get AI-powered transparency insights
+                try:
+                    ai_transparency_insights = gemini_ai.generate_transparency_insights(
+                        model_info, 
+                        feature_importances
+                    )
+                    
+                    # Add AI insights to results
+                    if 'error' not in ai_transparency_insights:
+                        explainability_results['ai_transparency_insights'] = ai_transparency_insights
+                except Exception as ai_error:
+                    # Log the error but continue without AI insights
+                    print(f"AI transparency analysis error: {str(ai_error)}")
                 
                 # Create and save analysis
                 model_analysis = ModelAnalysis(
@@ -199,11 +242,24 @@ def analyze_bias(request):
         bias_results = detect_bias_in_data(df, sensitive_attrs)
         fairness_metrics = calculate_fairness_metrics(df, sensitive_attrs)
         
-        return JsonResponse({
+        # Add AI-powered ethics analysis if requested
+        use_ai = request.POST.get('use_ai_analysis', 'false').lower() == 'true'
+        ai_ethics_analysis = None
+        
+        if use_ai:
+            target_column = request.POST.get('target_column', None)
+            ai_ethics_analysis = perform_ai_ethics_analysis(df, sensitive_attrs, target_column)
+        
+        response_data = {
             'success': True,
             'bias_results': bias_results,
             'fairness_metrics': fairness_metrics
-        })
+        }
+        
+        if ai_ethics_analysis:
+            response_data['ai_ethics_analysis'] = ai_ethics_analysis
+        
+        return JsonResponse(response_data)
     
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
@@ -237,10 +293,38 @@ def analyze_model_transparency(request):
             explanation_level
         )
         
-        return JsonResponse({
+        # Add AI-powered transparency insights if requested
+        use_ai = request.POST.get('use_ai_analysis', 'false').lower() == 'true'
+        ai_transparency_insights = None
+        
+        if use_ai:
+            # Prepare model info and feature importance for AI analysis
+            model_info = {
+                'model_type': model_type,
+                'data_shape': df.shape,
+                'target_column': target_column,
+                'explanation_level': explanation_level
+            }
+            
+            feature_importances = {}
+            if 'feature_importance' in explainability_results:
+                feature_importances = explainability_results['feature_importance']
+            
+            # Get AI-powered transparency insights
+            ai_transparency_insights = gemini_ai.generate_transparency_insights(
+                model_info, 
+                feature_importances
+            )
+        
+        response_data = {
             'success': True,
             'explainability_results': explainability_results
-        })
+        }
+        
+        if ai_transparency_insights:
+            response_data['ai_transparency_insights'] = ai_transparency_insights
+        
+        return JsonResponse(response_data)
     
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
@@ -253,7 +337,69 @@ def get_governance_framework(request, framework_type):
     
     framework_template = get_governance_template(framework_type)
     
-    return JsonResponse({
+    # Check if AI-powered recommendations are requested
+    use_ai = request.GET.get('use_ai_analysis', 'false').lower() == 'true'
+    ai_governance_recommendations = None
+    
+    if use_ai:
+        # Get parameters for AI recommendations
+        industry = request.GET.get('industry', 'general')
+        regulatory_requirements = request.GET.get('regulatory_requirements', '').split(',')
+        regulatory_requirements = [req.strip() for req in regulatory_requirements if req.strip()]
+        model_risk_level = request.GET.get('model_risk_level', 'medium')
+        
+        # Generate AI-powered governance recommendations
+        ai_governance_recommendations = gemini_ai.create_governance_recommendations(
+            industry,
+            regulatory_requirements or ['general compliance'],
+            model_risk_level
+        )
+    
+    response_data = {
         'success': True,
         'framework': framework_template
-    })
+    }
+    
+    if ai_governance_recommendations:
+        response_data['ai_governance_recommendations'] = ai_governance_recommendations
+    
+    return JsonResponse(response_data)
+
+
+@csrf_exempt
+def analyze_fairness_metrics(request):
+    """API endpoint for analyzing fairness metrics with AI insights"""
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only POST method is allowed'}, status=405)
+    
+    try:
+        # Get metrics data from request
+        try:
+            metrics_data = json.loads(request.body)
+        except:
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+        
+        if not metrics_data:
+            return JsonResponse({'error': 'No metrics data provided'}, status=400)
+        
+        # Get parameters for AI analysis
+        model_type = metrics_data.get('model_type', 'classification')
+        sensitive_groups = metrics_data.get('sensitive_groups', [])
+        
+        if not sensitive_groups:
+            return JsonResponse({'error': 'No sensitive groups specified'}, status=400)
+        
+        # Analyze fairness metrics with AI
+        analysis_results = gemini_ai.analyze_fairness_metrics(
+            metrics_data,
+            model_type,
+            sensitive_groups
+        )
+        
+        return JsonResponse({
+            'success': True,
+            'analysis_results': analysis_results
+        })
+    
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
