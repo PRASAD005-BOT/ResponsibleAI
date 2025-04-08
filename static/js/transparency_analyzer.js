@@ -209,16 +209,42 @@ function parseCSVLine(line) {
 }
 
 /**
+ * Helper function to decode HTML entities
+ * Defined outside other functions to be globally available
+ */
+function decodeHtmlEntities(str) {
+    if (!str) return '';
+    const txt = document.createElement('textarea');
+    txt.innerHTML = str;
+    return txt.value;
+}
+
+/**
  * Initialize visualizations for existing transparency analyses
  */
 function initExistingTransparencyVisualizations() {
     const transparencyAnalyses = document.querySelectorAll('.transparency-analysis');
+    
+    if (!transparencyAnalyses || transparencyAnalyses.length === 0) {
+        console.log('No transparency analyses found on this page');
+        return;
+    }
     
     transparencyAnalyses.forEach(analysis => {
         try {
             // Get analysis data
             const analysisId = analysis.getAttribute('data-analysis-id');
             const transparencyResultsStr = analysis.getAttribute('data-transparency-results');
+            
+            if (!analysisId) {
+                console.error('Missing analysis ID in transparency analysis element');
+                return;
+            }
+            
+            if (!transparencyResultsStr) {
+                console.error(`Missing transparency results for analysis ID: ${analysisId}`);
+                return;
+            }
             
             // Parse JSON data safely
             let transparencyResults;
@@ -233,19 +259,13 @@ function initExistingTransparencyVisualizations() {
                 transparencyResults = { error: 'Invalid JSON data' };
             }
             
-            // Helper function to decode HTML entities
-            function decodeHtmlEntities(str) {
-                if (!str) return '';
-                const txt = document.createElement('textarea');
-                txt.innerHTML = str;
-                return txt.value;
-            }
-            
             // Create visualizations
-            createTransparencyVisualizations(analysisId, transparencyResults);
-            
-            // Show additional information
-            populateTransparencySummary(analysisId, transparencyResults);
+            if (transparencyResults && !transparencyResults.error) {
+                createTransparencyVisualizations(analysisId, transparencyResults);
+                
+                // Show additional information
+                populateTransparencySummary(analysisId, transparencyResults);
+            }
             
         } catch (error) {
             console.error('Error initializing transparency visualization:', error);
