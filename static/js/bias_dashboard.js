@@ -28,6 +28,9 @@ function initBiasDetectionForm() {
     const fileLabel = document.querySelector('.file-input-label');
     const submitButton = form.querySelector('button[type="submit"]');
     
+    // Initialize analysis type selection
+    initAnalysisTypeToggle();
+    
     // Add file input change handler
     if (fileInput && fileLabel) {
         fileInput.addEventListener('change', function() {
@@ -52,6 +55,67 @@ function initBiasDetectionForm() {
     
     // Initialize sensitive attributes suggestions
     initSensitiveAttributesSuggestions();
+}
+
+/**
+ * Initialize the toggle between dataset and manual analysis types
+ */
+function initAnalysisTypeToggle() {
+    const radioButtons = document.querySelectorAll('input[name="analysis_type"]');
+    const datasetFields = document.getElementById('dataset-fields');
+    const manualFields = document.getElementById('manual-fields');
+    
+    if (!radioButtons.length || !datasetFields || !manualFields) return;
+    
+    // Set up click handlers for the radio buttons
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'dataset') {
+                datasetFields.style.display = 'block';
+                manualFields.style.display = 'none';
+            } else if (this.value === 'manual') {
+                datasetFields.style.display = 'none';
+                manualFields.style.display = 'block';
+            }
+        });
+    });
+    
+    // Set initial state based on selected radio button
+    const selectedRadio = document.querySelector('input[name="analysis_type"]:checked');
+    if (selectedRadio) {
+        if (selectedRadio.value === 'dataset') {
+            datasetFields.style.display = 'block';
+            manualFields.style.display = 'none';
+        } else if (selectedRadio.value === 'manual') {
+            datasetFields.style.display = 'none';
+            manualFields.style.display = 'block';
+        }
+    }
+    
+    // Auto-populate sensitive attributes field based on manual inputs
+    const demoFields = document.querySelectorAll('#manual-fields select, #manual-fields input[type="number"]');
+    const sensitiveAttrsField = document.getElementById('id_sensitive_attributes');
+    
+    if (demoFields.length && sensitiveAttrsField) {
+        demoFields.forEach(field => {
+            field.addEventListener('change', function() {
+                // Get field ID without the 'id_' prefix
+                const fieldName = this.id.replace('id_', '');
+                
+                // Only if the field has a value
+                if (this.value) {
+                    // Get current sensitive attributes
+                    let currentAttrs = sensitiveAttrsField.value.split(',').map(attr => attr.trim()).filter(attr => attr);
+                    
+                    // Add this field if not already included
+                    if (!currentAttrs.includes(fieldName)) {
+                        currentAttrs.push(fieldName);
+                        sensitiveAttrsField.value = currentAttrs.join(', ');
+                    }
+                }
+            });
+        });
+    }
 }
 
 /**

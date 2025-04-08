@@ -116,35 +116,126 @@
                             </div>
                             
                             <div class="form-group">
-                                <label class="form-label" for="id_data_file">Dataset File (CSV)</label>
-                                <div class="file-input-container">
-                                    <span class="file-input-label">Choose a file...</span>
-                                    {{ form.data_file }}
+                                <label class="form-label">Analysis Type</label>
+                                <div class="analysis-type-selector">
+                                    {{ form.analysis_type }}
                                 </div>
-                                <small class="form-text">Upload a CSV file containing your dataset</small>
-                                {% if form.data_file.errors %}
-                                <div class="form-error">{{ form.data_file.errors }}</div>
-                                {% endif %}
+                            </div>
+                            
+                            <!-- Dataset upload fields (shown when dataset analysis type is selected) -->
+                            <div id="dataset-fields" class="analysis-section">
+                                <div class="form-group">
+                                    <label class="form-label" for="id_data_file">Dataset File (CSV)</label>
+                                    <div class="file-input-container">
+                                        <span class="file-input-label">Choose a file...</span>
+                                        {{ form.data_file }}
+                                    </div>
+                                    <small class="form-text">Upload a CSV file containing your dataset</small>
+                                    {% if form.data_file.errors %}
+                                    <div class="form-error">{{ form.data_file.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="id_model_file">Model File (Optional)</label>
+                                    <div class="file-input-container">
+                                        <span class="file-input-label">Choose a file...</span>
+                                        {{ form.model_file }}
+                                    </div>
+                                    <small class="form-text">Upload your trained model file if available</small>
+                                    {% if form.model_file.errors %}
+                                    <div class="form-error">{{ form.model_file.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Manual data entry fields (shown when manual analysis type is selected) -->
+                            <div id="manual-fields" class="analysis-section" style="display: none;">
+                                <h3>Enter Individual Data</h3>
+                                <p class="text-muted">Enter your demographic information for personalized bias analysis</p>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="id_age">Age</label>
+                                            {{ form.age }}
+                                            <small class="form-text">Your age</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="id_gender">Gender</label>
+                                            {{ form.gender }}
+                                            <small class="form-text">Your gender</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="id_ethnicity">Ethnicity</label>
+                                            {{ form.ethnicity }}
+                                            <small class="form-text">Your ethnicity</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="id_income">Annual Income (USD)</label>
+                                            {{ form.income }}
+                                            <small class="form-text">Your annual income in USD</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="id_education_level">Education Level</label>
+                                            {{ form.education_level }}
+                                            <small class="form-text">Your highest education level</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="id_employment_status">Employment Status</label>
+                                            {{ form.employment_status }}
+                                            <small class="form-text">Your current employment status</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="id_location">Location (City/Country)</label>
+                                            {{ form.location }}
+                                            <small class="form-text">Your location</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="id_disability">Disability Status</label>
+                                            {{ form.disability }}
+                                            <small class="form-text">Do you have a disability?</small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             
                             <div class="form-group">
                                 <label class="form-label" for="id_sensitive_attributes">Sensitive Attributes</label>
                                 {{ form.sensitive_attributes }}
-                                <small class="form-text">Enter comma-separated list of sensitive attributes to check for bias (e.g., gender,age,race)</small>
+                                <small class="form-text">Enter comma-separated list of attributes to check for bias (e.g., gender,age,race)</small>
+                                <div class="attribute-suggestions">
+                                    <span class="badge attribute-suggestion">gender</span>
+                                    <span class="badge attribute-suggestion">age</span>
+                                    <span class="badge attribute-suggestion">ethnicity</span>
+                                    <span class="badge attribute-suggestion">income</span>
+                                    <span class="badge attribute-suggestion">education_level</span>
+                                </div>
                                 {% if form.sensitive_attributes.errors %}
                                 <div class="form-error">{{ form.sensitive_attributes.errors }}</div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label" for="id_model_file">Model File (Optional)</label>
-                                <div class="file-input-container">
-                                    <span class="file-input-label">Choose a file...</span>
-                                    {{ form.model_file }}
-                                </div>
-                                <small class="form-text">Upload your trained model file if available</small>
-                                {% if form.model_file.errors %}
-                                <div class="form-error">{{ form.model_file.errors }}</div>
                                 {% endif %}
                             </div>
                             

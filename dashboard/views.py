@@ -44,24 +44,61 @@ def bias_detection(request):
             model_analysis = form.save(commit=False)
             
             try:
-                # Process uploaded file
-                data_file = request.FILES['data_file']
-                df = pd.read_csv(data_file)
+                # Determine analysis type (dataset upload or manual input)
+                analysis_type = form.cleaned_data.get('analysis_type')
+                
+                # Process data based on analysis type
+                if analysis_type == 'dataset':
+                    # Process uploaded file
+                    data_file = request.FILES.get('data_file')
+                    if not data_file:
+                        messages.error(request, "Dataset file is required for dataset analysis")
+                        return redirect('dashboard:bias_detection')
+                        
+                    df = pd.read_csv(data_file)
+                else:  # manual input
+                    # Create dataframe from manual input
+                    from .bias_detection import create_dataframe_from_manual_input
+                    df = create_dataframe_from_manual_input(form.cleaned_data)
+                    
+                    if df is None or len(df) == 0:
+                        messages.error(request, "Please provide at least two attributes for manual analysis")
+                        return redirect('dashboard:bias_detection')
                 
                 # Get sensitive attributes from form
                 sensitive_attrs = [attr.strip() for attr in 
                                  form.cleaned_data['sensitive_attributes'].split(',')]
                 
+                # Filter sensitive attributes to only include columns that exist in the dataframe
+                valid_sensitive_attrs = [attr for attr in sensitive_attrs if attr in df.columns]
+                
+                if not valid_sensitive_attrs:
+                    if analysis_type == 'manual':
+                        # For manual input, use provided demographic attributes as sensitive attributes
+                        demo_attrs = ['age', 'gender', 'ethnicity', 'income', 'education_level', 
+                                     'employment_status', 'disability']
+                        valid_sensitive_attrs = [attr for attr in demo_attrs if attr in df.columns]
+                        
+                        if not valid_sensitive_attrs:
+                            messages.error(request, "No valid sensitive attributes provided or found in data")
+                            return redirect('dashboard:bias_detection')
+                    else:
+                        messages.error(request, "None of the specified sensitive attributes were found in the dataset")
+                        return redirect('dashboard:bias_detection')
+                
                 # Detect bias in the data
-                bias_results = detect_bias_in_data(df, sensitive_attrs)
-                fairness_metrics = calculate_fairness_metrics(df, sensitive_attrs)
+                bias_results = detect_bias_in_data(df, valid_sensitive_attrs)
+                fairness_metrics = calculate_fairness_metrics(df, valid_sensitive_attrs)
                 
                 # Perform AI-powered ethics analysis
-                ai_ethics_analysis = perform_ai_ethics_analysis(df, sensitive_attrs)
+                ai_ethics_analysis = perform_ai_ethics_analysis(df, valid_sensitive_attrs)
                 
                 # Merge AI analysis with bias results
                 if 'error' not in ai_ethics_analysis:
                     bias_results['ai_ethics_analysis'] = ai_ethics_analysis
+                
+                # Add analysis type to results
+                bias_results['analysis_type'] = analysis_type
                 
                 # Save results to model
                 model_analysis.bias_analysis = bias_results
@@ -95,13 +132,103 @@ def transparency(request):
         form = TransparencyAnalyzerForm(request.POST, request.FILES)
         if form.is_valid():
             try:
-                # Process uploaded file
-                data_file = request.FILES['data_file']
-                df = pd.read_csv(data_file)
-                
+                # Determine analysis type (dataset upload or manual input)
+                analysis_type = form.cleaned_data.get('analysis_type')
                 model_type = form.cleaned_data['model_type']
-                target_column = form.cleaned_data['target_column']
                 explanation_level = form.cleaned_data['explanation_level']
+                
+                # Process data based on analysis type
+                if analysis_type == 'dataset':
+                    # Process uploaded file
+                    data_file = request.FILES.get('data_file')
+                    if not data_file:
+                        messages.error(request, "Dataset file is required for dataset analysis")
+                        return redirect('dashboard:transparency')
+                        
+                    df = pd.read_csv(data_file)
+                    target_column = form.cleaned_data.get('target_column')
+                    
+                    if not target_column or target_column not in df.columns:
+                        messages.error(request, "Please specify a valid target column in the dataset")
+                        return redirect('dashboard:transparency')
+                else:  # manual input
+                    # Create dataframe from manually entered features
+                    data = {}
+                    
+                    # Extract feature names and values
+                    feature_names = []
+                    feature_values = []
+                    
+                    for i in range(1, 6):
+                        name_key = f'feature_{i}_name'
+                        value_key = f'feature_{i}_value'
+                        
+                        name = form.cleaned_data.get(name_key)
+                        value = form.cleaned_data.get(value_key)
+                        
+                        if name and value is not None:
+                            feature_names.append(name)
+                            feature_values.append(value)
+                            data[name] = [value]
+                    
+                    # Add categorical feature if provided
+                    cat_feature = form.cleaned_data.get('categorical_feature')
+                    cat_value = form.cleaned_data.get('categorical_value')
+                    
+                    if cat_feature and cat_value:
+                        data[cat_feature] = [cat_value]
+                        feature_names.append(cat_feature)
+                    
+                    if len(feature_names) < 2:
+                        messages.error(request, "Please provide at least two features for analysis")
+                        return redirect('dashboard:transparency')
+                    
+                    # Create a target column for analysis
+                    target_column = 'synthesized_target'
+                    
+                    # Create a simple synthetic target based on the first feature
+                    # This is just for demonstration purposes
+                    first_feature_value = feature_values[0]
+                    threshold = first_feature_value * 0.75  # Arbitrary threshold
+                    
+                    if model_type == 'classification':
+                        # Binary classification target
+                        data[target_column] = [1 if first_feature_value > threshold else 0]
+                    else:
+                        # Regression target (scaled version of first feature)
+                        data[target_column] = [first_feature_value * 1.5]
+                    
+                    # Create the dataframe
+                    df = pd.DataFrame(data)
+                    
+                    # Generate a small synthetic dataset for context
+                    # Add 20 rows with slightly varied data
+                    for _ in range(20):
+                        row = {}
+                        for name, value in zip(feature_names, feature_values):
+                            if isinstance(value, (int, float)):
+                                # Add random variation around the original value
+                                variation = value * 0.2  # 20% variation
+                                row[name] = value + np.random.uniform(-variation, variation)
+                            else:
+                                row[name] = value
+                        
+                        # Add categorical feature if provided
+                        if cat_feature and cat_value:
+                            row[cat_feature] = cat_value
+                        
+                        # Add target value
+                        if model_type == 'classification':
+                            # Synthetic classification target
+                            first_feat_with_noise = row.get(feature_names[0], 0) * (1 + np.random.normal(0, 0.1))
+                            row[target_column] = 1 if first_feat_with_noise > threshold else 0
+                        else:
+                            # Synthetic regression target
+                            first_feat_with_noise = row.get(feature_names[0], 0) * (1 + np.random.normal(0, 0.1))
+                            row[target_column] = first_feat_with_noise * 1.5
+                        
+                        # Append to dataframe
+                        df = pd.concat([df, pd.DataFrame([row])], ignore_index=True)
                 
                 # Generate model explainability
                 explainability_results = analyze_model_explainability(
@@ -116,12 +243,16 @@ def transparency(request):
                 if 'feature_importance' in explainability_results:
                     feature_importances = explainability_results['feature_importance']
                 
+                # Add analysis type to results
+                explainability_results['analysis_type'] = analysis_type
+                
                 # Prepare model info for AI analysis
                 model_info = {
                     'model_type': model_type,
                     'data_shape': df.shape,
                     'target_column': target_column,
-                    'explanation_level': explanation_level
+                    'explanation_level': explanation_level,
+                    'analysis_type': analysis_type
                 }
                 
                 # Get AI-powered transparency insights

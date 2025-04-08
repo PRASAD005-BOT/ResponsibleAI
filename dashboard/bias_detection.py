@@ -12,6 +12,138 @@ import scipy.stats as stats
 # Import Gemini AI module
 from . import gemini_ai
 
+def create_dataframe_from_manual_input(form_data):
+    """
+    Creates a pandas DataFrame from manually entered form data
+    
+    Parameters:
+    -----------
+    form_data : dict
+        Dictionary containing form data from the frontend
+        
+    Returns:
+    --------
+    pandas.DataFrame
+        A DataFrame constructed from the manual input
+    """
+    # Initialize empty data dictionary
+    data = {}
+    
+    # Extract common demographic attributes
+    if form_data.get('age'):
+        data['age'] = [form_data.get('age')]
+        
+    if form_data.get('gender'):
+        data['gender'] = [form_data.get('gender')]
+        
+    if form_data.get('ethnicity'):
+        data['ethnicity'] = [form_data.get('ethnicity')]
+        
+    if form_data.get('income'):
+        data['income'] = [form_data.get('income')]
+        
+    if form_data.get('education_level'):
+        data['education_level'] = [form_data.get('education_level')]
+        
+    if form_data.get('location'):
+        data['location'] = [form_data.get('location')]
+        
+    if form_data.get('employment_status'):
+        data['employment_status'] = [form_data.get('employment_status')]
+        
+    if form_data.get('disability'):
+        data['disability'] = [form_data.get('disability')]
+    
+    # Create example population data for comparison
+    # We use the user's input as a single data point and add synthetic comparison data
+    # This is necessary for bias detection which requires multiple data points
+    
+    # Create a DataFrame with the user's data
+    user_df = pd.DataFrame(data)
+    
+    if len(user_df.columns) == 0:
+        # No valid data provided
+        return None
+    
+    # Create a sample population for comparison
+    # This is a minimal approach - we just need some comparison points
+    population_size = 100
+    complete_df = user_df.copy()
+    
+    # For each column, generate similar but slightly varied data
+    for column in user_df.columns:
+        if column == 'age' and 'age' in user_df.columns:
+            # Generate age distribution centered around user's age with reasonable spread
+            user_age = user_df['age'].iloc[0]
+            age_std = 10  # standard deviation for age distribution
+            ages = np.random.normal(user_age, age_std, population_size)
+            ages = np.clip(ages, 18, 90).astype(int)  # clip to reasonable range
+            complete_df[column] = ages
+            
+        elif column == 'income' and 'income' in user_df.columns:
+            # Generate income distribution
+            user_income = user_df['income'].iloc[0]
+            income_std = user_income * 0.3  # 30% standard deviation
+            incomes = np.random.normal(user_income, income_std, population_size)
+            incomes = np.clip(incomes, 0, None).astype(int)
+            complete_df[column] = incomes
+            
+        elif column in ['gender', 'ethnicity', 'education_level', 'employment_status', 'disability']:
+            # For categorical variables, create a realistic distribution
+            user_value = user_df[column].iloc[0]
+            
+            # Create distribution where user's value has higher probability
+            categories = get_category_values(column)
+            probabilities = [0.1] * len(categories)
+            
+            # User's category gets higher probability
+            user_idx = categories.index(user_value) if user_value in categories else 0
+            probabilities[user_idx] = 0.5
+            
+            # Normalize probabilities
+            probabilities = [p/sum(probabilities) for p in probabilities]
+            
+            # Generate population data
+            complete_df[column] = np.random.choice(
+                categories, 
+                size=population_size, 
+                p=probabilities
+            )
+            
+        elif column == 'location' and 'location' in user_df.columns:
+            # For location, we just duplicate the user's value
+            complete_df[column] = user_df[column].iloc[0]
+            
+    return complete_df
+
+def get_category_values(column_name):
+    """
+    Return possible values for categorical variables
+    
+    Parameters:
+    -----------
+    column_name : str
+        Name of the categorical column
+        
+    Returns:
+    --------
+    list
+        List of possible values for the category
+    """
+    categories = {
+        'gender': ['male', 'female', 'non_binary', 'other'],
+        'ethnicity': ['asian', 'black', 'hispanic', 'middle_eastern', 
+                     'native_american', 'pacific_islander', 'white', 
+                     'multiple', 'other'],
+        'education_level': ['high_school', 'associate', 'bachelor', 
+                          'master', 'doctorate', 'other'],
+        'employment_status': ['employed', 'part_time', 'self_employed', 
+                            'unemployed', 'student', 'retired', 'other'],
+        'disability': ['yes', 'no', 'prefer_not_to_say']
+    }
+    
+    return categories.get(column_name, ['unknown'])
+
 def detect_bias_in_data(df, sensitive_attributes, target_column=None):
     """
     Detects potential bias in data based on sensitive attributes
