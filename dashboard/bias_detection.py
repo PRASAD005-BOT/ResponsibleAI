@@ -68,51 +68,62 @@ def create_dataframe_from_manual_input(form_data):
     # Create a sample population for comparison
     # This is a minimal approach - we just need some comparison points
     population_size = 100
-    complete_df = user_df.copy()
     
-    # For each column, generate similar but slightly varied data
-    for column in user_df.columns:
-        if column == 'age' and 'age' in user_df.columns:
-            # Generate age distribution centered around user's age with reasonable spread
-            user_age = user_df['age'].iloc[0]
-            age_std = 10  # standard deviation for age distribution
-            ages = np.random.normal(user_age, age_std, population_size)
-            ages = np.clip(ages, 18, 90).astype(int)  # clip to reasonable range
-            complete_df[column] = ages
-            
-        elif column == 'income' and 'income' in user_df.columns:
-            # Generate income distribution
-            user_income = user_df['income'].iloc[0]
-            income_std = user_income * 0.3  # 30% standard deviation
-            incomes = np.random.normal(user_income, income_std, population_size)
-            incomes = np.clip(incomes, 0, None).astype(int)
-            complete_df[column] = incomes
-            
-        elif column in ['gender', 'ethnicity', 'education_level', 'employment_status', 'disability']:
-            # For categorical variables, create a realistic distribution
-            user_value = user_df[column].iloc[0]
-            
-            # Create distribution where user's value has higher probability
-            categories = get_category_values(column)
-            probabilities = [0.1] * len(categories)
-            
-            # User's category gets higher probability
-            user_idx = categories.index(user_value) if user_value in categories else 0
-            probabilities[user_idx] = 0.5
-            
-            # Normalize probabilities
-            probabilities = [p/sum(probabilities) for p in probabilities]
-            
-            # Generate population data
-            complete_df[column] = np.random.choice(
-                categories, 
-                size=population_size, 
-                p=probabilities
-            )
-            
-        elif column == 'location' and 'location' in user_df.columns:
-            # For location, we just duplicate the user's value
-            complete_df[column] = user_df[column].iloc[0]
+    # Create a new empty DataFrame with the same columns as user_df
+    complete_df = pd.DataFrame(columns=user_df.columns)
+    
+    # First, add the user's original row to the complete dataframe
+    complete_df = pd.concat([complete_df, user_df], ignore_index=True)
+    
+    # Generate additional rows
+    new_rows = []
+    for _ in range(population_size-1):  # -1 because we already added the original row
+        new_row = {}
+        
+        # For each column, generate similar but slightly varied data
+        for column in user_df.columns:
+            if column == 'age' and 'age' in user_df.columns:
+                # Generate age with reasonable spread
+                user_age = user_df['age'].iloc[0]
+                age_std = 10  # standard deviation for age distribution
+                new_age = int(np.clip(np.random.normal(user_age, age_std), 18, 90))
+                new_row[column] = new_age
+                
+            elif column == 'income' and 'income' in user_df.columns:
+                # Generate income with variation
+                user_income = user_df['income'].iloc[0]
+                income_std = user_income * 0.3  # 30% standard deviation
+                new_income = int(np.clip(np.random.normal(user_income, income_std), 0, None))
+                new_row[column] = new_income
+                
+            elif column in ['gender', 'ethnicity', 'education_level', 'employment_status', 'disability']:
+                # For categorical variables, create a realistic distribution
+                user_value = user_df[column].iloc[0]
+                
+                # Create distribution where user's value has higher probability
+                categories = get_category_values(column)
+                probabilities = [0.1] * len(categories)
+                
+                # User's category gets higher probability
+                user_idx = categories.index(user_value) if user_value in categories else 0
+                probabilities[user_idx] = 0.5
+                
+                # Normalize probabilities
+                probabilities = [p/sum(probabilities) for p in probabilities]
+                
+                # Generate population data
+                new_row[column] = np.random.choice(categories, p=probabilities)
+                
+            elif column == 'location' and 'location' in user_df.columns:
+                # For location, we just duplicate the user's value
+                new_row[column] = user_df[column].iloc[0]
+                
+        new_rows.append(new_row)
+    
+    # Add all the new rows to the complete dataframe
+    if new_rows:
+        new_rows_df = pd.DataFrame(new_rows)
+        complete_df = pd.concat([complete_df, new_rows_df], ignore_index=True)
             
     return complete_df
 
