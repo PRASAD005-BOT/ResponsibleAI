@@ -1,0 +1,1 @@
+web: gunicorn ai_ethics_platform.wsgi --log-file -

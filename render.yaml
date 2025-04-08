@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: ai-ethics-platform
+    env: python
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn ai_ethics_platform.wsgi:application
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ai_ethics_db
+          property: connectionString
+
+databases:
+  - name: ai_ethics_db
+    databaseName: ai_ethics
+    user: ai_ethics_user
+    plan: free
