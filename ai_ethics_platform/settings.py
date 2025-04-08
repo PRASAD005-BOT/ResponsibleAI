@@ -18,7 +18,24 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-default-key-for-developmen
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', '.replit.dev', '.repl.co', '.onrender.com']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', '.replit.dev', '.repl.co', '.replit.app', '.onrender.com', '*']
+
+# CSRF Trusted Origins - needed for secure form submissions
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.replit.dev',
+    'https://*.replit.app',
+    'https://*.repl.co',
+    'https://*.onrender.com',
+]
+
+# Add your Replit domain to CSRF trusted origins if running on Replit
+REPLIT_DOMAIN = os.getenv('REPLIT_DOMAINS')
+if REPLIT_DOMAIN:
+    domains = REPLIT_DOMAIN.split(',')
+    for domain in domains:
+        domain = domain.strip()
+        if domain:
+            CSRF_TRUSTED_ORIGINS.extend([f'https://{domain}', f'http://{domain}'])
 
 # Application definition
 
@@ -103,6 +120,13 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+# For currency formatting globally
+USE_L10N = True
+USE_THOUSAND_SEPARATOR = True
+THOUSAND_SEPARATOR = ','
+DECIMAL_SEPARATOR = '.'
+NUMBER_GROUPING = 3
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

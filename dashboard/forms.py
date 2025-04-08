@@ -3,7 +3,15 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from .models import ModelAnalysis, UserProfile
 
-class CustomSignUpForm(UserCreationForm):
+class BaseForm:
+    """Base form class with CSRF protection compatibility"""
+    @property
+    def hidden_tag(self):
+        """Compatibility method for templates that use Flask-style form.hidden_tag()"""
+        # This is just a no-op in Django as csrf_token template tag handles this
+        return ""
+
+class CustomSignUpForm(UserCreationForm, BaseForm):
     """Extended user registration form"""
     
     email = forms.EmailField(
@@ -60,7 +68,7 @@ class CustomSignUpForm(UserCreationForm):
             
         return user
 
-class CustomLoginForm(AuthenticationForm):
+class CustomLoginForm(AuthenticationForm, BaseForm):
     """Enhanced login form with styling"""
     
     username = forms.CharField(
@@ -71,7 +79,7 @@ class CustomLoginForm(AuthenticationForm):
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'})
     )
 
-class UserProfileForm(forms.ModelForm):
+class UserProfileForm(forms.ModelForm, BaseForm):
     """Form for editing user profile information"""
     
     INDUSTRY_CHOICES = [
@@ -165,7 +173,7 @@ class UserProfileForm(forms.ModelForm):
         
         return profile
 
-class ModelUploadForm(forms.ModelForm):
+class ModelUploadForm(forms.ModelForm, BaseForm):
     """Form for uploading machine learning models for analysis"""
     
     ANALYSIS_TYPE_CHOICES = [
@@ -304,7 +312,7 @@ class ModelUploadForm(forms.ModelForm):
             
         return cleaned_data
 
-class TransparencyAnalyzerForm(forms.Form):
+class TransparencyAnalyzerForm(forms.Form, BaseForm):
     """Form for analyzing model transparency and explainability"""
     
     ANALYSIS_TYPE_CHOICES = [
