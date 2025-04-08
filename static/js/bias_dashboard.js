@@ -187,17 +187,31 @@ function initExistingBiasVisualizations() {
             let biasResults, fairnessMetrics;
             
             try {
-                biasResults = biasResultsStr ? JSON.parse(biasResultsStr) : {};
+                // Decode HTML entities (like &quot;) before parsing
+                const decodedBiasResults = biasResultsStr ? decodeHtmlEntities(biasResultsStr) : '{}';
+                biasResults = JSON.parse(decodedBiasResults);
             } catch (parseError) {
                 console.error('Error parsing bias results JSON:', parseError);
+                console.log('Raw JSON string:', biasResultsStr);
                 biasResults = { error: 'Invalid JSON data' };
             }
             
             try {
-                fairnessMetrics = fairnessMetricsStr ? JSON.parse(fairnessMetricsStr) : null;
+                // Decode HTML entities before parsing
+                const decodedFairnessMetrics = fairnessMetricsStr ? decodeHtmlEntities(fairnessMetricsStr) : 'null';
+                fairnessMetrics = JSON.parse(decodedFairnessMetrics);
             } catch (parseError) {
                 console.error('Error parsing fairness metrics JSON:', parseError);
+                console.log('Raw JSON string:', fairnessMetricsStr);
                 fairnessMetrics = null;
+            }
+            
+            // Helper function to decode HTML entities
+            function decodeHtmlEntities(str) {
+                if (!str) return '';
+                const txt = document.createElement('textarea');
+                txt.innerHTML = str;
+                return txt.value;
             }
             
             // Create visualizations

@@ -320,8 +320,8 @@
                         {% if analysis.bias_analysis %}
                         <div id="analysis-{{ analysis.id }}" class="bias-analysis" 
                              data-analysis-id="{{ analysis.id }}" 
-                             data-bias-results="{{ analysis.bias_analysis|safe }}"
-                             data-fairness-metrics="{{ analysis.fairness_metrics|safe }}">
+                             data-bias-results="{{ analysis.bias_analysis|escapejs|safe }}"
+                             data-fairness-metrics="{{ analysis.fairness_metrics|escapejs|safe }}">
                             
                             <h3>{{ analysis.name }}</h3>
                             <p><strong>Model Type:</strong> {{ analysis.get_model_type_display }}</p>

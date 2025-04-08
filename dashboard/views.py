@@ -4,10 +4,23 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate, logout
+from django.core.serializers.json import DjangoJSONEncoder
 import json
 import pandas as pd
 import numpy as np
 import io
+
+# Ensure we're encoding JSON in a consistent way
+class CustomJSONEncoder(DjangoJSONEncoder):
+    """Custom JSON encoder that handles additional types"""
+    def default(self, obj):
+        if isinstance(obj, (np.int_, np.intc, np.intp, np.int8, np.int16, np.int32, np.int64, np.uint8, np.uint16, np.uint32, np.uint64)):
+            return int(obj)
+        elif isinstance(obj, (np.float_, np.float16, np.float32, np.float64)):
+            return float(obj)
+        elif isinstance(obj, (np.ndarray,)):
+            return obj.tolist()
+        return super().default(obj)
 
 from .models import ModelAnalysis, CaseStudy, EducationalResource, UserProfile, UserActivity
 from .forms import ModelUploadForm, TransparencyAnalyzerForm, CustomSignUpForm, CustomLoginForm, UserProfileForm
@@ -116,19 +129,27 @@ def bias_detection(request):
                     # Add analysis type to results
                     bias_results['analysis_type'] = analysis_type
                     
-                    # Save results to model
-                    model_analysis.bias_analysis = bias_results
-                    model_analysis.fairness_metrics = fairness_metrics
+                    # Save results to model - serialize with our custom encoder
+                    bias_json = json.dumps(bias_results, cls=CustomJSONEncoder)
+                    fairness_json = json.dumps(fairness_metrics, cls=CustomJSONEncoder)
+                    
+                    # Load back to ensure proper serialization
+                    model_analysis.bias_analysis = json.loads(bias_json)
+                    model_analysis.fairness_metrics = json.loads(fairness_json)
                     model_analysis.save()
                     
                 except Exception as e:
                     # Create minimal valid results in case of error
                     error_message = str(e)
-                    model_analysis.bias_analysis = {
+                    error_results = {
                         'error': f"Error in analysis: {error_message}",
                         'dataset_size': len(df),
                         'analysis_type': analysis_type
                     }
+                    
+                    # Serialize with custom encoder for consistency
+                    error_json = json.dumps(error_results, cls=CustomJSONEncoder)
+                    model_analysis.bias_analysis = json.loads(error_json)
                     model_analysis.save()
                     messages.warning(request, f"Analysis completed with errors: {error_message}")
                     return redirect('dashboard:bias_detection')
@@ -539,10 +560,11 @@ def analyze_bias(request):
         if ai_ethics_analysis:
             response_data['ai_ethics_analysis'] = ai_ethics_analysis
         
-        return JsonResponse(response_data)
+        # Use custom encoder to ensure proper serialization of numpy types
+        return JsonResponse(response_data, encoder=CustomJSONEncoder)
     
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'error': str(e)}, status=500, encoder=CustomJSONEncoder)
 
 
 @csrf_exempt
@@ -604,10 +626,11 @@ def analyze_model_transparency(request):
         if ai_transparency_insights:
             response_data['ai_transparency_insights'] = ai_transparency_insights
         
-        return JsonResponse(response_data)
+        # Use custom encoder to ensure proper serialization of numpy types
+        return JsonResponse(response_data, encoder=CustomJSONEncoder)
     
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({"error": str(e)}, status=500, encoder=CustomJSONEncoder)
 
 
 def get_governance_framework(request, framework_type):
@@ -643,7 +666,8 @@ def get_governance_framework(request, framework_type):
     if ai_governance_recommendations:
         response_data['ai_governance_recommendations'] = ai_governance_recommendations
     
-    return JsonResponse(response_data)
+    # Use custom encoder to ensure proper serialization of numpy types
+    return JsonResponse(response_data, encoder=CustomJSONEncoder)
 
 
 @csrf_exempt
@@ -679,7 +703,7 @@ def analyze_fairness_metrics(request):
         return JsonResponse({
             'success': True,
             'analysis_results': analysis_results
-        })
+        }, encoder=CustomJSONEncoder)
     
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({"error": str(e)}, status=500, encoder=CustomJSONEncoder)
