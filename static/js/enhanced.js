@@ -5,6 +5,12 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     try {
+        // Register ScrollTrigger plugin
+        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+            gsap.registerPlugin(ScrollTrigger);
+            console.log('ScrollTrigger plugin registered');
+        }
+
         // Initialize enhanced UI effects
         initAnimations();
         initScrollEffects();
