@@ -91,24 +91,47 @@ def bias_detection(request):
                 # Get sample dataset type
                 sample_dataset_type = form.cleaned_data.get('sample_dataset_type', '')
                 
-                # Detect bias in the data
-                bias_results = detect_bias_in_data(df, valid_sensitive_attrs, None, sample_dataset_type)
-                fairness_metrics = calculate_fairness_metrics(df, valid_sensitive_attrs)
+                try:
+                    # Detect bias in the data
+                    bias_results = detect_bias_in_data(df, valid_sensitive_attrs, None, sample_dataset_type)
+                    
+                    # Structure for minimal viable result if there are issues
+                    if not isinstance(bias_results, dict):
+                        bias_results = {
+                            'error': 'Invalid bias results format',
+                            'dataset_size': len(df),
+                            'analysis_type': analysis_type
+                        }
+                    
+                    # Calculate fairness metrics
+                    fairness_metrics = calculate_fairness_metrics(df, valid_sensitive_attrs)
+                    
+                    # Perform AI-powered ethics analysis
+                    ai_ethics_analysis = perform_ai_ethics_analysis(df, valid_sensitive_attrs, None, sample_dataset_type)
+                    
+                    # Merge AI analysis with bias results (safely)
+                    if isinstance(ai_ethics_analysis, dict) and 'error' not in ai_ethics_analysis:
+                        bias_results['ai_ethics_analysis'] = ai_ethics_analysis
                 
-                # Perform AI-powered ethics analysis
-                ai_ethics_analysis = perform_ai_ethics_analysis(df, valid_sensitive_attrs, None, sample_dataset_type)
-                
-                # Merge AI analysis with bias results
-                if 'error' not in ai_ethics_analysis:
-                    bias_results['ai_ethics_analysis'] = ai_ethics_analysis
-                
-                # Add analysis type to results
-                bias_results['analysis_type'] = analysis_type
-                
-                # Save results to model
-                model_analysis.bias_analysis = bias_results
-                model_analysis.fairness_metrics = fairness_metrics
-                model_analysis.save()
+                    # Add analysis type to results
+                    bias_results['analysis_type'] = analysis_type
+                    
+                    # Save results to model
+                    model_analysis.bias_analysis = bias_results
+                    model_analysis.fairness_metrics = fairness_metrics
+                    model_analysis.save()
+                    
+                except Exception as e:
+                    # Create minimal valid results in case of error
+                    error_message = str(e)
+                    model_analysis.bias_analysis = {
+                        'error': f"Error in analysis: {error_message}",
+                        'dataset_size': len(df),
+                        'analysis_type': analysis_type
+                    }
+                    model_analysis.save()
+                    messages.warning(request, f"Analysis completed with errors: {error_message}")
+                    return redirect('dashboard:bias_detection')
                 
                 messages.success(request, "Bias analysis completed successfully.")
                 return redirect('dashboard:bias_detection')

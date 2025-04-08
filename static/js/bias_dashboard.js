@@ -183,9 +183,22 @@ function initExistingBiasVisualizations() {
             const biasResultsStr = analysis.getAttribute('data-bias-results');
             const fairnessMetricsStr = analysis.getAttribute('data-fairness-metrics');
             
-            // Parse JSON data
-            const biasResults = JSON.parse(biasResultsStr);
-            const fairnessMetrics = fairnessMetricsStr ? JSON.parse(fairnessMetricsStr) : null;
+            // Parse JSON data safely
+            let biasResults, fairnessMetrics;
+            
+            try {
+                biasResults = biasResultsStr ? JSON.parse(biasResultsStr) : {};
+            } catch (parseError) {
+                console.error('Error parsing bias results JSON:', parseError);
+                biasResults = { error: 'Invalid JSON data' };
+            }
+            
+            try {
+                fairnessMetrics = fairnessMetricsStr ? JSON.parse(fairnessMetricsStr) : null;
+            } catch (parseError) {
+                console.error('Error parsing fairness metrics JSON:', parseError);
+                fairnessMetrics = null;
+            }
             
             // Create visualizations
             createBiasVisualizations(analysisId, biasResults, fairnessMetrics);
@@ -207,6 +220,21 @@ function initExistingBiasVisualizations() {
  */
 function createBiasVisualizations(analysisId, biasResults, fairnessMetrics) {
     if (!biasResults || !analysisId) return;
+    
+    // Handle error case
+    if (biasResults.error) {
+        const errorContainer = document.getElementById(`bias-summary-${analysisId}`);
+        if (errorContainer) {
+            errorContainer.innerHTML = `
+                <div class="alert alert-warning">
+                    <h4>Analysis Error</h4>
+                    <p>${biasResults.error}</p>
+                    <p>Please try running the analysis again with different parameters.</p>
+                </div>
+            `;
+        }
+        return;
+    }
     
     // Get visualization containers
     const distributionContainer = document.getElementById(`distribution-charts-${analysisId}`);
@@ -363,6 +391,9 @@ function createBiasVisualizations(analysisId, biasResults, fairnessMetrics) {
 function populateBiasAnalysisSummary(analysisId, biasResults, fairnessMetrics) {
     const summaryContainer = document.getElementById(`bias-summary-${analysisId}`);
     if (!summaryContainer || !biasResults) return;
+    
+    // Handle error case - already being handled in createBiasVisualizations
+    if (biasResults.error) return;
     
     // Create summary HTML
     let summaryHtml = '<h3>Bias Analysis Summary</h3>';
@@ -521,6 +552,11 @@ function populateBiasAnalysisSummary(analysisId, biasResults, fairnessMetrics) {
  * @returns {string} HTML string with recommendations
  */
 function generateBiasRecommendations(biasResults, fairnessMetrics) {
+    // Check for valid inputs
+    if (!biasResults || biasResults.error) {
+        return '<li>Unable to generate recommendations due to analysis errors.</li>';
+    }
+    
     let recommendations = [];
     
     // Check for high-risk attributes

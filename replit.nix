@@ -1,5 +1,6 @@
 {pkgs}: {
   deps = [
+    pkgs.postgresql
     pkgs.xsimd
     pkgs.libxcrypt
     pkgs.tk
