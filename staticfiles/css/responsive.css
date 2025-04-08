@@ -1,0 +1,320 @@
+/* AI Ethics Platform - Responsive Styles */
+
+/* Media Queries for different screen sizes */
+
+/* Large devices (desktops, less than 1200px) */
+@media (max-width: 1199.98px) {
+  .container {
+    max-width: 960px;
+  }
+  
+  .stat-value {
+    font-size: 2.2rem;
+  }
+  
+  .chart-container {
+    height: 350px;
+  }
+}
+
+/* Medium devices (tablets, less than 992px) */
+@media (max-width: 991.98px) {
+  .container {
+    max-width: 720px;
+  }
+  
+  .navbar-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .navbar-brand {
+    margin-bottom: 1rem;
+  }
+  
+  .navbar-nav {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .nav-item {
+    margin-left: 0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .stat-value {
+    font-size: 2rem;
+  }
+  
+  .chart-container {
+    height: 300px;
+  }
+  
+  /* Adjust card layout for smaller screens */
+  .row {
+    flex-direction: column;
+  }
+  
+  .col {
+    flex: 0 0 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  /* Make tabs scrollable on small screens */
+  .tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    white-space: nowrap;
+  }
+  
+  /* Mobile navigation */
+  .mobile-menu-toggle {
+    display: block;
+  }
+  
+  .navbar-nav {
+    display: none;
+  }
+  
+  .navbar-nav.active {
+    display: flex;
+  }
+}
+
+/* Small devices (landscape phones, less than 768px) */
+@media (max-width: 767.98px) {
+  .container {
+    max-width: 540px;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.3rem;
+  }
+  
+  .dashboard-header {
+    padding: 1.5rem 0;
+  }
+  
+  .chart-container {
+    height: 250px;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+  }
+  
+  .stat-value {
+    font-size: 1.8rem;
+  }
+  
+  /* Stack form elements */
+  .form-row {
+    flex-direction: column;
+  }
+  
+  .form-col {
+    flex: 0 0 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  /* Adjust button sizes */
+  .btn {
+    padding: 0.4rem 0.8rem;
+  }
+  
+  /* Footer adjustments */
+  .footer {
+    padding: 2rem 0;
+  }
+  
+  .footer-col {
+    flex: 0 0 100%;
+    max-width: 100%;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Dashboard components */
+  .chart-wrapper {
+    margin-bottom: 1.5rem;
+    min-height: 300px;
+  }
+  
+  /* Analysis cards */
+  .bias-analysis, .transparency-analysis {
+    padding: 1rem;
+  }
+  
+  /* Tab navigation */
+  .tab-item {
+    margin-right: 1rem;
+  }
+}
+
+/* Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 575.98px) {
+  .container {
+    padding: 0 10px;
+  }
+  
+  h1 {
+    font-size: 1.6rem;
+  }
+  
+  h2 {
+    font-size: 1.4rem;
+  }
+  
+  h3 {
+    font-size: 1.2rem;
+  }
+  
+  .card-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .btn-block-xs {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Form elements */
+  .form-control {
+    padding: 0.6rem;
+  }
+  
+  /* Analysis details */
+  .bias-metric-card {
+    padding: 0.75rem;
+  }
+  
+  /* Charts */
+  .chart-container {
+    height: 200px;
+  }
+  
+  /* Footer */
+  .footer {
+    margin-top: 2rem;
+    padding: 1.5rem 0;
+  }
+  
+  .copyright {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+  }
+  
+  /* Enhance tap targets for mobile */
+  .badge, .tab-link, .btn {
+    padding: 0.4rem 0.8rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  /* Attribute suggestions */
+  .attribute-suggestions .badge, 
+  .column-suggestions .badge {
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Mobile nav toggle styles */
+.mobile-menu-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  position: absolute;
+  right: 15px;
+  top: 15px;
+}
+
+@media (max-width: 991.98px) {
+  .mobile-menu-toggle {
+    display: block;
+  }
+  
+  .navbar-container {
+    position: relative;
+    padding: 0 15px;
+  }
+  
+  .navbar-nav {
+    margin-top: 1rem;
+    width: 100%;
+  }
+}
+
+/* Orientation-specific styles */
+@media (max-height: 500px) and (orientation: landscape) {
+  .dashboard-header {
+    padding: 1rem 0;
+  }
+  
+  .navbar {
+    padding: 0.5rem 0;
+  }
+  
+  .chart-container {
+    height: 180px;
+  }
+}
+
+/* Print styles */
+@media print {
+  .navbar, .footer, .btn, form, .mobile-menu-toggle {
+    display: none !important;
+  }
+  
+  body {
+    font-size: 12pt;
+    background-color: white;
+    color: black;
+  }
+  
+  .container {
+    max-width: 100%;
+    padding: 0;
+  }
+  
+  .card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+  
+  .chart-container {
+    page-break-inside: avoid;
+    max-height: 300px;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  
+  .col {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  
+  /* Ensure charts print properly */
+  canvas {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
