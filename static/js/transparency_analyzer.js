@@ -220,8 +220,26 @@ function initExistingTransparencyVisualizations() {
             const analysisId = analysis.getAttribute('data-analysis-id');
             const transparencyResultsStr = analysis.getAttribute('data-transparency-results');
             
-            // Parse JSON data
-            const transparencyResults = JSON.parse(transparencyResultsStr);
+            // Parse JSON data safely
+            let transparencyResults;
+            
+            try {
+                // Decode HTML entities (like &quot;) before parsing
+                const decodedResults = transparencyResultsStr ? decodeHtmlEntities(transparencyResultsStr) : '{}';
+                transparencyResults = JSON.parse(decodedResults);
+            } catch (parseError) {
+                console.error('Error parsing transparency results JSON:', parseError);
+                console.log('Raw JSON string:', transparencyResultsStr);
+                transparencyResults = { error: 'Invalid JSON data' };
+            }
+            
+            // Helper function to decode HTML entities
+            function decodeHtmlEntities(str) {
+                if (!str) return '';
+                const txt = document.createElement('textarea');
+                txt.innerHTML = str;
+                return txt.value;
+            }
             
             // Create visualizations
             createTransparencyVisualizations(analysisId, transparencyResults);
@@ -263,7 +281,15 @@ function createTransparencyVisualizations(analysisId, transparencyResults) {
         // Create chart
         const chartConfig = prepareFeatureImportanceVisualization(transparencyResults);
         if (chartConfig) {
-            transparencyCharts[analysisId][canvasId] = createChart(canvasId, chartConfig);
+            try {
+                if (typeof createChart === 'function') {
+                    transparencyCharts[analysisId][canvasId] = createChart(canvasId, chartConfig);
+                } else {
+                    console.error('createChart function not available');
+                }
+            } catch (error) {
+                console.error('Error creating feature importance chart:', error);
+            }
         }
     }
     
@@ -283,7 +309,15 @@ function createTransparencyVisualizations(analysisId, transparencyResults) {
         // Create chart
         const chartConfig = prepareFeatureInteractionsVisualization(transparencyResults);
         if (chartConfig) {
-            transparencyCharts[analysisId][canvasId] = createChart(canvasId, chartConfig);
+            try {
+                if (typeof createChart === 'function') {
+                    transparencyCharts[analysisId][canvasId] = createChart(canvasId, chartConfig);
+                } else {
+                    console.error('createChart function not available');
+                }
+            } catch (error) {
+                console.error('Error creating feature interactions chart:', error);
+            }
         }
     }
 }
