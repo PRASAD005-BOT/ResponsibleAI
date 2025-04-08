@@ -3,15 +3,20 @@
 /* Global styles */
 :root {
   --primary-color: #3f51b5;
+  --primary-color-rgb: 63, 81, 181; /* RGB values for rgba usage */
   --primary-light: #7986cb;
   --primary-dark: #303f9f;
   --secondary-color: #ff4081;
   --secondary-light: #ff80ab;
   --secondary-dark: #c51162;
   --success-color: #4caf50;
+  --success-color-rgb: 76, 175, 80;
   --error-color: #f44336;
+  --error-color-rgb: 244, 67, 54;
   --warning-color: #ff9800;
+  --warning-color-rgb: 255, 152, 0;
   --info-color: #2196f3;
+  --info-color-rgb: 33, 150, 243;
   --text-dark: #212121;
   --text-medium: #757575;
   --text-light: #fafafa;

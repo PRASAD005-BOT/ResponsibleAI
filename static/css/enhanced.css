@@ -578,6 +578,417 @@ html {
   transition: 0s;
 }
 
+/* ======= NEW AUTHENTICATION & NOTIFICATION STYLES ======= */
+
+/* Glass Effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+}
+
+/* Auth Container Enhancements */
+.auth-container {
+  padding: 2.5rem;
+  max-width: 500px;
+  margin: 2rem auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.auth-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.auth-title {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.auth-subtitle {
+  color: var(--text-medium);
+  font-size: 1rem;
+}
+
+/* Form Enhancements */
+.auth-form {
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+/* Input with Icon */
+.input-with-icon {
+  position: relative;
+}
+
+.input-with-icon i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary-color);
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.input-with-icon .form-control {
+  padding-left: 40px;
+  border-radius: 8px;
+  height: 50px;
+  border: 2px solid transparent;
+  background-color: rgba(0, 0, 0, 0.02);
+  transition: all 0.3s ease;
+}
+
+.input-with-icon .form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 5px 15px rgba(0, 119, 255, 0.1);
+  background-color: #fff;
+}
+
+.input-with-icon .form-control:focus + i {
+  color: var(--primary-color);
+  opacity: 1;
+}
+
+/* Floating Label Effect */
+.floating-label {
+  position: absolute;
+  left: 40px;
+  top: 15px;
+  color: var(--text-medium);
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.floating-label.active,
+.form-control:focus + .floating-label,
+.form-control:not(:placeholder-shown) + .floating-label {
+  transform: translateY(-20px) scale(0.85);
+  color: var(--primary-color);
+  opacity: 1;
+  background-color: #fff;
+  padding: 0 5px;
+  left: 10px;
+}
+
+/* Error Message Animation */
+.error-message {
+  color: var(--error-color);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: rgba(255, 0, 0, 0.05);
+}
+
+.animated.shake {
+  animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+/* Enhanced Buttons */
+.btn.pulse-effect {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  overflow: hidden;
+  background: linear-gradient(45deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  border: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn.pulse-effect:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 14px rgba(var(--primary-color-rgb), 0.2), 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn.pulse-effect:active {
+  transform: translateY(1px);
+}
+
+.btn.pulse-effect::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.5s, opacity 0.3s;
+}
+
+.btn.pulse-effect:hover::after {
+  transform: translate(-50%, -50%) scale(3);
+  opacity: 0;
+}
+
+.btn-text {
+  margin-right: 10px;
+  position: relative;
+  z-index: 2;
+}
+
+.btn-icon {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease;
+}
+
+.btn.pulse-effect:hover .btn-icon {
+  transform: translateX(5px);
+}
+
+.btn.loading {
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+/* Password Helper */
+.password-helper {
+  font-size: 0.8rem;
+  color: var(--text-medium);
+  margin-top: 0.5rem;
+  display: block;
+}
+
+/* Auth Links */
+.auth-links {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.highlight-link {
+  color: var(--primary-color);
+  font-weight: 600;
+  position: relative;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.highlight-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: var(--primary-color);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s ease;
+}
+
+.highlight-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Fade-in-up Animation */
+.fade-in-up {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ======= NOTIFICATION SYSTEM ======= */
+#notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  width: 320px;
+  max-width: 90%;
+}
+
+.notification {
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: flex-start;
+  overflow: hidden;
+  position: relative;
+  background-color: white;
+  border-left: 5px solid #ccc;
+}
+
+.notification::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.notification-success {
+  border-left-color: var(--success-color);
+}
+
+.notification-error {
+  border-left-color: var(--error-color);
+}
+
+.notification-warning {
+  border-left-color: var(--warning-color);
+}
+
+.notification-info {
+  border-left-color: var(--primary-color);
+}
+
+.notification-icon {
+  margin-right: 15px;
+  font-size: 1.2rem;
+}
+
+.notification-success .notification-icon {
+  color: var(--success-color);
+}
+
+.notification-error .notification-icon {
+  color: var(--error-color);
+}
+
+.notification-warning .notification-icon {
+  color: var(--warning-color);
+}
+
+.notification-info .notification-icon {
+  color: var(--primary-color);
+}
+
+.notification-content {
+  flex: 1;
+  margin-right: 10px;
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  line-height: 1.4;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--text-medium);
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.notification-close:hover {
+  color: var(--text-dark);
+}
+
+/* Notification Animations */
+.fadeInRight {
+  animation: fadeInRight 0.5s ease forwards;
+}
+
+.fadeOutRight {
+  animation: fadeOutRight 0.5s ease forwards;
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+}
+
+/* Progress bar for login/signup forms */
+.form-progress {
+  height: 3px;
+  background-color: rgba(var(--primary-color-rgb), 0.2);
+  width: 100%;
+  border-radius: 3px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.form-progress-bar {
+  height: 100%;
+  width: 33.33%;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+/* Typing cursor effect */
+.typing-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.2em;
+  background-color: var(--primary-color);
+  margin-left: 2px;
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+}
+
+@keyframes blink {
+  from, to { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   :root {
@@ -605,5 +1016,20 @@ html {
   
   .progress {
     background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .glass-effect {
+    background: rgba(30, 30, 30, 0.85);
+  }
+  
+  .notification {
+    background-color: #333;
+    color: #eee;
+  }
+  
+  .floating-label.active,
+  .form-control:focus + .floating-label,
+  .form-control:not(:placeholder-shown) + .floating-label {
+    background-color: #333;
   }
 }

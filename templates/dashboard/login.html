@@ -5,49 +5,63 @@
 {% block content %}
 <section class="auth-section">
     <div class="container">
-        <div class="auth-container">
-            <h1 class="auth-title">Login to Your Account</h1>
-            <p class="auth-subtitle">Access your AI ethics analyses and resources</p>
+        <div class="auth-container glass-effect">
+            <div class="auth-header">
+                <h1 class="auth-title fade-in-up">Login to Your Account</h1>
+                <p class="auth-subtitle fade-in-up" style="animation-delay: 0.2s;">Access your AI ethics analyses and resources</p>
+            </div>
             
-            <form method="post" class="auth-form">
+            <form method="post" class="auth-form fade-in-up" style="animation-delay: 0.3s;" id="loginForm">
                 {% csrf_token %}
                 {{ form.hidden_tag }}
                 
                 <div class="form-group">
-                    <label for="{{ form.username.id_for_label }}">Username</label>
-                    {{ form.username }}
+                    <label for="{{ form.username.id_for_label }}" class="floating-label">Username</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        {{ form.username }}
+                    </div>
                     {% if form.username.errors %}
-                        <div class="error-message">
+                        <div class="error-message animated shake">
                             {{ form.username.errors }}
                         </div>
                     {% endif %}
                 </div>
                 
                 <div class="form-group">
-                    <label for="{{ form.password.id_for_label }}">Password</label>
-                    {{ form.password }}
+                    <label for="{{ form.password.id_for_label }}" class="floating-label">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        {{ form.password }}
+                    </div>
                     {% if form.password.errors %}
-                        <div class="error-message">
+                        <div class="error-message animated shake">
                             {{ form.password.errors }}
                         </div>
                     {% endif %}
                 </div>
                 
                 {% if form.non_field_errors %}
-                    <div class="error-message">
+                    <div class="error-message animated shake">
                         {{ form.non_field_errors }}
                     </div>
                 {% endif %}
                 
-                <button type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
+                <button type="submit" class="btn btn-primary btn-lg btn-block pulse-effect">
+                    <span class="btn-text">Login</span>
+                    <span class="btn-icon"><i class="fas fa-arrow-right"></i></span>
+                </button>
             </form>
             
-            <div class="auth-links">
-                <p>Don't have an account? <a href="{% url 'dashboard:signup' %}">Sign Up</a></p>
+            <div class="auth-links fade-in-up" style="animation-delay: 0.4s;">
+                <p>Don't have an account? <a href="{% url 'dashboard:signup' %}" class="highlight-link">Sign Up</a></p>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Notification system -->
+<div id="notification-container"></div>
 
 <!-- Add some animated particles for visual interest -->
 <div class="particles-container">
@@ -57,6 +71,7 @@
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Initialize particles background
@@ -94,6 +109,105 @@
             },
             retina_detect: true
         });
+
+        // Create notification function
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type} animated fadeInRight`;
+            
+            // Icons based on notification type
+            let icon = '';
+            switch(type) {
+                case 'success':
+                    icon = '<i class="fas fa-check-circle"></i>';
+                    break;
+                case 'error':
+                    icon = '<i class="fas fa-exclamation-circle"></i>';
+                    break;
+                case 'warning':
+                    icon = '<i class="fas fa-exclamation-triangle"></i>';
+                    break;
+                default:
+                    icon = '<i class="fas fa-info-circle"></i>';
+            }
+            
+            notification.innerHTML = `
+                <div class="notification-icon">${icon}</div>
+                <div class="notification-content">${message}</div>
+                <button class="notification-close">&times;</button>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.classList.replace('fadeInRight', 'fadeOutRight');
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 5000);
+            
+            // Close button functionality
+            notification.querySelector('.notification-close').addEventListener('click', () => {
+                notification.classList.replace('fadeInRight', 'fadeOutRight');
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            });
+        }
+
+        // Form interaction notifications
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            // Show welcome notification on page load
+            setTimeout(() => {
+                showNotification('Welcome to the AI Ethics Platform. Please log in to continue.', 'info');
+            }, 500);
+            
+            // Add focus effects to form fields
+            const formInputs = loginForm.querySelectorAll('input');
+            formInputs.forEach(input => {
+                // Show notification on first field focus
+                input.addEventListener('focus', function() {
+                    if (!this.dataset.focused) {
+                        if (this.name === 'username') {
+                            showNotification('Enter your username to continue', 'info');
+                        } else if (this.name === 'password') {
+                            showNotification('Enter your password securely', 'info');
+                        }
+                        this.dataset.focused = 'true';
+                    }
+                });
+                
+                // Add floating label effect
+                input.addEventListener('input', function() {
+                    const label = this.closest('.form-group').querySelector('label');
+                    if (this.value.length > 0) {
+                        label.classList.add('active');
+                    } else {
+                        label.classList.remove('active');
+                    }
+                });
+                
+                // Trigger input event to initialize labels
+                const event = new Event('input');
+                input.dispatchEvent(event);
+            });
+            
+            // Add form submission effect
+            loginForm.addEventListener('submit', function(e) {
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.classList.add('loading');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+                
+                // Show processing notification
+                showNotification('Processing your login request...', 'info');
+                
+                // Note: We don't prevent the default form submission
+                // since we want the actual login to proceed
+            });
+        }
     });
 </script>
 {% endblock %}
