@@ -26,6 +26,9 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.replit.app',
     'https://*.repl.co',
     'https://*.onrender.com',
+    'http://localhost:5000',
+    'http://0.0.0.0:5000',
+    'http://127.0.0.1:5000',
 ]
 
 # Add your Replit domain to CSRF trusted origins if running on Replit

@@ -4,16 +4,20 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize enhanced UI effects
-    initAnimations();
-    initScrollEffects();
-    initParallaxEffects();
-    initTypingEffect();
-    initCountUpAnimation();
-    initRippleEffect();
-    initImageEffects();
-    
-    console.log('Enhanced UI effects initialized');
+    try {
+        // Initialize enhanced UI effects
+        initAnimations();
+        initScrollEffects();
+        initParallaxEffects();
+        initTypingEffect();
+        initCountUpAnimation();
+        initRippleEffect();
+        initImageEffects();
+        
+        console.log('Enhanced UI effects initialized');
+    } catch (error) {
+        console.log('Enhanced UI initialization error:', error.message);
+    }
 });
 
 /**
@@ -69,25 +73,29 @@ function initAnimations() {
  * Initialize scroll-based effects
  */
 function initScrollEffects() {
-    // Navbar scroll effect
-    const navbar = document.querySelector('.navbar');
-    if (navbar) {
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('navbar-scrolled');
-            } else {
-                navbar.classList.remove('navbar-scrolled');
-            }
-        });
-    }
-    
-    // Parallax scroll for dashboard header
-    const dashboardHeader = document.querySelector('.dashboard-header');
-    if (dashboardHeader) {
-        window.addEventListener('scroll', () => {
-            const scrollValue = window.scrollY;
-            dashboardHeader.style.backgroundPositionY = scrollValue * 0.4 + 'px';
-        });
+    try {
+        // Navbar scroll effect
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('navbar-scrolled');
+                } else {
+                    navbar.classList.remove('navbar-scrolled');
+                }
+            });
+        }
+        
+        // Parallax scroll for dashboard header
+        const dashboardHeader = document.querySelector('.dashboard-header');
+        if (dashboardHeader) {
+            window.addEventListener('scroll', () => {
+                const scrollValue = window.scrollY;
+                dashboardHeader.style.backgroundPositionY = scrollValue * 0.4 + 'px';
+            });
+        }
+    } catch (error) {
+        console.log('Error in initScrollEffects:', error.message);
     }
     
     // Progress bar animations on scroll
