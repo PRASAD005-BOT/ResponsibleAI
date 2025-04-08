@@ -122,10 +122,32 @@
     flex-direction: column;
   }
   
+  .form-row .form-group {
+    flex: 0 0 100%;
+    max-width: 100%;
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-row .col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+  }
+  
   .form-col {
     flex: 0 0 100%;
     max-width: 100%;
     margin-bottom: 1rem;
+  }
+  
+  /* Auth container responsiveness */
+  .auth-container {
+    width: 95%;
+    padding: 1.5rem;
+  }
+  
+  .auth-title {
+    font-size: 1.8rem;
   }
   
   /* Adjust button sizes */

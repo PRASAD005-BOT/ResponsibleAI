@@ -72,11 +72,11 @@ class CustomLoginForm(AuthenticationForm, BaseForm):
     """Enhanced login form with styling"""
     
     username = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'})
+        widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'})
+        widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
 
 class UserProfileForm(forms.ModelForm, BaseForm):
