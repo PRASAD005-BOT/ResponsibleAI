@@ -126,6 +126,15 @@
                             <!-- Dataset upload fields (shown when dataset analysis type is selected) -->
                             <div id="dataset-fields" class="analysis-section">
                                 <div class="form-group">
+                                    <label class="form-label" for="id_sample_dataset_type">Sample Dataset Type</label>
+                                    {{ form.sample_dataset_type }}
+                                    <small class="form-text">Select a type of dataset you're analyzing to help contextualize the results</small>
+                                    {% if form.sample_dataset_type.errors %}
+                                    <div class="form-error">{{ form.sample_dataset_type.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
                                     <label class="form-label" for="id_data_file">Dataset File (CSV)</label>
                                     <div class="file-input-container">
                                         <span class="file-input-label">Choose a file...</span>
@@ -154,6 +163,12 @@
                             <div id="manual-fields" class="analysis-section" style="display: none;">
                                 <h3>Enter Individual Data</h3>
                                 <p class="text-muted">Enter your demographic information for personalized bias analysis</p>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="id_sample_dataset_type_manual">Sample Dataset Type</label>
+                                    {{ form.sample_dataset_type }}
+                                    <small class="form-text">Select a type of dataset you're analyzing to help contextualize the results</small>
+                                </div>
                                 
                                 <div class="row">
                                     <div class="col-md-6">

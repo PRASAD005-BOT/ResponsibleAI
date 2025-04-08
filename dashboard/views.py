@@ -88,12 +88,15 @@ def bias_detection(request):
                         messages.error(request, "None of the specified sensitive attributes were found in the dataset")
                         return redirect('dashboard:bias_detection')
                 
+                # Get sample dataset type
+                sample_dataset_type = form.cleaned_data.get('sample_dataset_type', '')
+                
                 # Detect bias in the data
-                bias_results = detect_bias_in_data(df, valid_sensitive_attrs)
+                bias_results = detect_bias_in_data(df, valid_sensitive_attrs, None, sample_dataset_type)
                 fairness_metrics = calculate_fairness_metrics(df, valid_sensitive_attrs)
                 
                 # Perform AI-powered ethics analysis
-                ai_ethics_analysis = perform_ai_ethics_analysis(df, valid_sensitive_attrs)
+                ai_ethics_analysis = perform_ai_ethics_analysis(df, valid_sensitive_attrs, None, sample_dataset_type)
                 
                 # Merge AI analysis with bias results
                 if 'error' not in ai_ethics_analysis:

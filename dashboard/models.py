@@ -57,10 +57,27 @@ class ModelAnalysis(models.Model):
         ('other', 'Other')
     ]
     
+    SAMPLE_DATASET_TYPES = [
+        ('', '-- Not Specified --'),
+        ('hiring_dataset', 'Hiring Decision Dataset'),
+        ('loan_approval', 'Loan Approval Dataset'),
+        ('healthcare_decisions', 'Healthcare Treatment Dataset'),
+        ('criminal_justice', 'Criminal Justice Dataset'),
+        ('marketing_targeting', 'Marketing Targeting Dataset'),
+        ('insurance_pricing', 'Insurance Pricing Dataset'),
+        ('educational_assessment', 'Educational Assessment Dataset'),
+        ('credit_scoring', 'Credit Scoring Dataset'),
+        ('housing_allocation', 'Housing Allocation Dataset'),
+        ('facial_recognition', 'Facial Recognition Dataset'),
+        ('nlp_sentiment', 'NLP Sentiment Analysis Dataset'),
+        ('recommendation_system', 'Recommendation System Dataset')
+    ]
+    
     name = models.CharField(max_length=100)
     description = models.TextField()
     model_type = models.CharField(max_length=20, choices=MODEL_TYPES)
     dataset_description = models.TextField()
+    sample_dataset_type = models.CharField(max_length=50, choices=SAMPLE_DATASET_TYPES, blank=True, default='')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     

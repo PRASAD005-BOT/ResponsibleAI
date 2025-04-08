@@ -155,7 +155,7 @@ def get_category_values(column_name):
     
     return categories.get(column_name, ['unknown'])
 
-def detect_bias_in_data(df, sensitive_attributes, target_column=None):
+def detect_bias_in_data(df, sensitive_attributes, target_column=None, sample_dataset_type=None):
     """
     Detects potential bias in data based on sensitive attributes
     
@@ -167,6 +167,8 @@ def detect_bias_in_data(df, sensitive_attributes, target_column=None):
         List of column names that contain sensitive attributes
     target_column : str, optional
         Target/outcome column if available
+    sample_dataset_type : str, optional
+        Type of dataset being analyzed (e.g., 'hiring_dataset', 'loan_approval')
         
     Returns:
     --------
@@ -350,7 +352,7 @@ def check_statistical_parity(df, sensitive_attr, target_column):
     return results
 
 
-def perform_ai_ethics_analysis(df, sensitive_attributes, target_column=None):
+def perform_ai_ethics_analysis(df, sensitive_attributes, target_column=None, sample_dataset_type=None):
     """
     Uses Google Gemini AI to perform advanced ethical analysis on dataset
     
@@ -362,6 +364,8 @@ def perform_ai_ethics_analysis(df, sensitive_attributes, target_column=None):
         List of column names that contain sensitive attributes
     target_column : str, optional
         Target/outcome column if available
+    sample_dataset_type : str, optional
+        Type of dataset being analyzed (e.g., 'hiring_dataset', 'loan_approval')
         
     Returns:
     --------
@@ -404,7 +408,7 @@ def perform_ai_ethics_analysis(df, sensitive_attributes, target_column=None):
             }
         
         # Call Gemini AI for analysis
-        ai_analysis = gemini_ai.analyze_dataset_ethics(df_info, sensitive_attributes)
+        ai_analysis = gemini_ai.analyze_dataset_ethics(df_info, sensitive_attributes, sample_dataset_type)
         return ai_analysis
         
     except Exception as e:

@@ -181,6 +181,22 @@ class ModelUploadForm(forms.ModelForm, BaseForm):
         ('manual', 'Enter Individual Data Manually')
     ]
     
+    SAMPLE_DATASET_CHOICES = [
+        ('', '-- Select a sample dataset type --'),
+        ('hiring_dataset', 'Hiring Decision Dataset'),
+        ('loan_approval', 'Loan Approval Dataset'),
+        ('healthcare_decisions', 'Healthcare Treatment Dataset'),
+        ('criminal_justice', 'Criminal Justice Dataset'),
+        ('marketing_targeting', 'Marketing Targeting Dataset'),
+        ('insurance_pricing', 'Insurance Pricing Dataset'),
+        ('educational_assessment', 'Educational Assessment Dataset'),
+        ('credit_scoring', 'Credit Scoring Dataset'),
+        ('housing_allocation', 'Housing Allocation Dataset'),
+        ('facial_recognition', 'Facial Recognition Dataset'),
+        ('nlp_sentiment', 'NLP Sentiment Analysis Dataset'),
+        ('recommendation_system', 'Recommendation System Dataset')
+    ]
+    
     analysis_type = forms.ChoiceField(
         choices=ANALYSIS_TYPE_CHOICES,
         label='Analysis Type',
@@ -191,7 +207,14 @@ class ModelUploadForm(forms.ModelForm, BaseForm):
     
     class Meta:
         model = ModelAnalysis
-        fields = ['name', 'description', 'model_type', 'dataset_description']
+        fields = ['name', 'description', 'model_type', 'dataset_description', 'sample_dataset_type']
+    
+    sample_dataset_type = forms.ChoiceField(
+        choices=SAMPLE_DATASET_CHOICES,
+        label='Sample Dataset Type',
+        required=False,
+        help_text='Select a type of dataset you\'re analyzing to help contextualize the results'
+    )
         
     data_file = forms.FileField(
         label='Dataset CSV File',

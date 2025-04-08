@@ -14,7 +14,7 @@ MODEL_NAME = settings.GEMINI_MODEL_NAME
 # Configure the Gemini API
 genai.configure(api_key=GOOGLE_GEMINI_API_KEY)
 
-def analyze_dataset_ethics(df_info, sensitive_attributes):
+def analyze_dataset_ethics(df_info, sensitive_attributes, sample_dataset_type=None):
     """
     Analyzes a dataset for potential ethical issues
     
@@ -24,6 +24,8 @@ def analyze_dataset_ethics(df_info, sensitive_attributes):
         Dictionary with dataset information (columns, sample rows, statistics)
     sensitive_attributes : list
         List of column names that contain sensitive attributes
+    sample_dataset_type : str, optional
+        Type of dataset being analyzed (e.g., 'hiring_dataset', 'loan_approval')
         
     Returns:
     --------
@@ -37,6 +39,8 @@ def analyze_dataset_ethics(df_info, sensitive_attributes):
     Dataset Info: {json.dumps(df_info, indent=2)}
     
     Sensitive Attributes: {', '.join(sensitive_attributes)}
+    
+    Dataset Type: {sample_dataset_type if sample_dataset_type else 'Not specified'}
     
     Please provide:
     1. Potential ethical concerns in this dataset
