@@ -1,5 +1,6 @@
 dj-database-url
 django
+gunicorn
 google-generativeai
 matplotlib
 numpy
