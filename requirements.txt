@@ -1,0 +1,11 @@
+dj-database-url
+django
+google-generativeai
+matplotlib
+numpy
+pandas
+prowler
+psycopg2-binary
+requests
+scikit-learn
+whitenoise
